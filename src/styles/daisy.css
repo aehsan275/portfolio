@@ -1,0 +1,13 @@
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+@plugin "daisyui" {
+  themes: false;
+  root: '.heritage-study';
+  prefix: 'd-';
+  include:
+    properties, button, badge, card, hover3d, stack, carousel, diff, collapse, timeline, steps,
+    mockup, dock, join, range, progress, modal;
+  exclude: rootscrollgutter;
+  logs: false;
+}

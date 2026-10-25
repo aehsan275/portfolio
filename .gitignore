@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.qa/
+.npm-cache/
+.impeccable-cache/
+archive/
+.sites-source/
+.sites-release.tar.gz
