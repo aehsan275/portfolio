@@ -3,9 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#3c5940" />
-    <meta name="description" content="Abdullah Ehsan. Projects, experience, books, and thoughts." />
-    <title>abdullah / portfolio</title>
+    <meta name="theme-color" content="#faf7ef" />
+    <script>
+      (() => {
+        let theme;
+        try {
+          theme = localStorage.getItem('portfolio-theme');
+        } catch {}
+        if (theme !== 'paper' && theme !== 'charcoal') {
+          theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'charcoal' : 'paper';
+        }
+        document.documentElement.dataset.theme = theme;
+        document.querySelector('meta[name="theme-color"]').content =
+          theme === 'charcoal' ? '#211f1b' : '#faf7ef';
+      })();
+    </script>
+    <meta
+      name="description"
+      content="abdullah ehsan. cs @ uwaterloo. looking for summer 2027 opportunities. mm kinetics, scrabble solver and a java flashcards app."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="abdullah ehsan" />
+    <meta property="og:description" content="cs @ waterloo · projects, experience, and thoughts" />
+    <meta property="og:image" content="/social-preview.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>abdullah ehsan</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preload" href="/fonts/manrope.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/literata.woff2" as="font" type="font/woff2" crossorigin />

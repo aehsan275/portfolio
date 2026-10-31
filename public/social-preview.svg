@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs><pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="0.8" fill="#777264" opacity=".25"/></pattern></defs>
+  <rect width="1200" height="630" fill="#faf7ef"/><rect width="1200" height="630" fill="url(#dots)"/>
+  <path d="M78 80V60h32M1090 60h32v20M78 550v20h32M1090 570h32v-20" fill="none" stroke="#b49355" stroke-width="2"/>
+  <path d="M114 68h972" stroke="#b49355" stroke-width="2" stroke-dasharray="1 10" stroke-linecap="round"/>
+  <text x="600" y="285" text-anchor="middle" font-family="Georgia,serif" font-size="124" fill="#34382b">abdullah<tspan fill="#95533f">.</tspan></text>
+  <text x="600" y="350" text-anchor="middle" font-family="Georgia,serif" font-size="26" fill="#666452">abdullah ehsan</text>
+  <text x="600" y="407" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" fill="#666452">cs @ waterloo · projects, experience, and thoughts</text>
+  <text x="600" y="520" text-anchor="middle" font-family="Georgia,serif" font-size="48" fill="#95533f">Æ</text>
+</svg>
