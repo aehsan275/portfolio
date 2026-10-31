@@ -757,9 +757,36 @@ html[data-page-hidden='true'] .name > span {
   padding-top: 0;
 }
 .site-footer {
+  position: relative;
   border-top: 1px solid var(--rule);
   margin-top: 48px;
   padding: 20px 0 40px;
+}
+.cs-webring {
+  position: absolute;
+  top: 18px;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-secondary);
+}
+.cs-webring a {
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 36px;
+  text-decoration: none;
+}
+.cs-webring a:hover { text-decoration: underline; }
+.cs-webring-mark span {
+  width: 25px;
+  height: 25px;
+  background-color: currentColor;
+  -webkit-mask: url('/logos/cs-webring.svg') center / contain no-repeat;
+  mask: url('/logos/cs-webring.svg') center / contain no-repeat;
 }
 .footer-name {
   margin-bottom: 8px;

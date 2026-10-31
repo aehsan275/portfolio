@@ -62,6 +62,19 @@ function ContactLinks() {
   );
 }
 
+function CsWebring() {
+  const ring = 'https://cs.uwatering.com/#abdullahehsan.vercel.app';
+  return (
+    <nav className="cs-webring" aria-label="Waterloo CS webring">
+      <a href={`${ring}?nav=prev`} aria-label="Previous site in the Waterloo CS webring">←</a>
+      <a href={ring} className="cs-webring-mark" aria-label="Waterloo CS webring">
+        <span aria-hidden="true" />
+      </a>
+      <a href={`${ring}?nav=next`} aria-label="Next site in the Waterloo CS webring">→</a>
+    </nav>
+  );
+}
+
 function BackToTop({ pageKey, reduced }: { pageKey: string; reduced: boolean }) {
   const [scrollable, setScrollable] = useState(false);
   const slot = useRef<HTMLDivElement>(null);
@@ -691,6 +704,7 @@ export default function App() {
         <PageContent path={route.path} reduced={reduced} initialHome={initialHome.current} />
         <footer className="site-footer" data-reading>
           <p className="footer-name">abdullah ehsan</p>
+          <CsWebring />
           <ContactLinks />
 
           <BackToTop key={route.path} pageKey={route.path} reduced={reduced} />

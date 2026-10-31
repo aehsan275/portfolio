@@ -109,7 +109,7 @@ try {
       );
       assert.equal(await nav().locator('a').count(), 4);
       assert.equal(
-        await page.locator('.site-footer').getByRole('link').count(),
+        await page.locator('.contact-links').getByRole('link').count(),
         5,
         'all contacts at bottom',
       );
@@ -122,7 +122,7 @@ try {
         githubBox.y >= emailBox.y + emailBox.height,
         'email is on its own row above social links',
       );
-      const footerType = await page.locator('.site-footer a').evaluateAll((nodes) =>
+      const footerType = await page.locator('.contact-links a').evaluateAll((nodes) =>
         nodes.map((el) => {
           const style = getComputedStyle(el);
           return [style.fontSize, style.fontFamily, style.lineHeight].join('|');
