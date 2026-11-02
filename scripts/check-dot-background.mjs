@@ -136,7 +136,7 @@ export async function checkDotBackground(page, base) {
     .getByRole('navigation', { name: 'main navigation' })
     .getByRole('link', { name: 'projects', exact: true })
     .click();
-  await page.locator('#project-kinetics').waitFor();
+  await page.locator('#project-mm-kinetics').waitFor();
   await page
     .getByRole('navigation', { name: 'main navigation' })
     .getByRole('link', { name: 'thoughts', exact: true })

@@ -540,11 +540,23 @@ function readLocation(): Location {
     '/about': '/',
     '/experience': '/what-ive-done#experience',
     '/education': '/what-ive-done#education',
+    '/projects/kinetics': '/projects/mm-kinetics',
+    '/projects/scrabble': '/projects/scrabble-solver',
+    '/projects/flashcards': '/projects/flashcards-app',
+    '/thoughts/2am-thoughts-before-a-midterm': '/thoughts/why-success-feels-average',
     '/projects/raytracer': '/projects',
     '/projects/http': '/projects',
     '/projects/rag': '/projects',
   };
+  const oldFragments: Record<string, string> = {
+    '#project-kinetics': '/projects/mm-kinetics',
+    '#project-scrabble': '/projects/scrabble-solver',
+    '#project-flashcards': '/projects/flashcards-app',
+    '#2am-thoughts-before-a-midterm': '/thoughts/why-success-feels-average',
+  };
   let destination = legacy[path];
+  if ((path === '/' || path === '/projects' || path === '/thoughts') && oldFragments[url.hash])
+    destination = oldFragments[url.hash];
   if (path === '/') {
     if (['#experience', '#education'].includes(url.hash)) destination = '/what-ive-done' + url.hash;
     else if (url.hash === '#projects') destination = '/projects';

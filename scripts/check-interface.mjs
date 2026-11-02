@@ -17,10 +17,10 @@ const routes = [
   ['/what-ive-done', 'what i’ve done'],
   ['/projects', 'projects'],
   ['/thoughts', 'thoughts'],
-  ['/projects/kinetics', 'projects'],
-  ['/projects/scrabble', 'projects'],
-  ['/projects/flashcards', 'projects'],
-  ['/thoughts/2am-thoughts-before-a-midterm', 'thoughts'],
+  ['/projects/mm-kinetics', 'projects'],
+  ['/projects/scrabble-solver', 'projects'],
+  ['/projects/flashcards-app', 'projects'],
+  ['/thoughts/why-success-feels-average', 'thoughts'],
   ['/thoughts/the-more-you-know-the-less-you-do', 'thoughts'],
   ['/thoughts/who-are-we', 'thoughts'],
 ];
@@ -214,7 +214,7 @@ try {
         }
       }
       if (path.slice(1).includes('/')) {
-        if (path === '/projects/kinetics') {
+        if (path === '/projects/mm-kinetics') {
           assert.equal(await page.locator('.project-writeup').count(), 1);
           assert.equal(await page.locator('.writeup-section').count(), 5);
           assert.equal(await page.locator('.project-writeup img').count(), 5);
@@ -225,11 +225,11 @@ try {
             ),
             'mm kinetics writeup is present',
           );
-        } else if (path === '/projects/scrabble') {
+        } else if (path === '/projects/scrabble-solver') {
           assert.equal(await page.locator('.writeup-section').count(), 5);
           assert.equal(await page.locator('.project-writeup img').count(), 1);
           assert.equal(await page.locator('.writeup-nav a').count(), 5);
-        } else if (path === '/projects/flashcards') {
+        } else if (path === '/projects/flashcards-app') {
           assert.equal(await page.locator('.detail-content p').count(), 4);
         } else if (path.startsWith('/projects/'))
           assert.equal(
@@ -316,8 +316,8 @@ try {
   for (const [name, path, hash] of [
     ['nexaquanta', '/what-ive-done', '#experience'],
     ['uwaterloo.', '/what-ive-done', '#education'],
-    ['mm kinetics', '/projects/kinetics', ''],
-    ['scrabble solver', '/projects/scrabble', ''],
+    ['mm kinetics', '/projects/mm-kinetics', ''],
+    ['scrabble solver', '/projects/scrabble-solver', ''],
     ['more projects', '/projects', ''],
   ]) {
     await page.goto(base);
@@ -334,16 +334,20 @@ try {
   for (const [source, destination] of [
     ['/experience', '/what-ive-done#experience'],
     ['/education', '/what-ive-done#education'],
-    ...['kinetics', 'scrabble', 'flashcards'].map((id) => ['/projects/' + id, '/projects/' + id]),
+    ['/projects/kinetics', '/projects/mm-kinetics'],
+    ['/projects/scrabble', '/projects/scrabble-solver'],
+    ['/projects/flashcards', '/projects/flashcards-app'],
+    ['/thoughts/2am-thoughts-before-a-midterm', '/thoughts/why-success-feels-average'],
+    ...['mm-kinetics', 'scrabble-solver', 'flashcards-app'].map((id) => ['/projects/' + id, '/projects/' + id]),
     ...['raytracer', 'http', 'rag'].map((id) => ['/projects/' + id, '/projects']),
     ['/#experience', '/what-ive-done#experience'],
     ['/#education', '/what-ive-done#education'],
     ['/#projects', '/projects'],
-    ['/#project-kinetics', '/projects/kinetics'],
-    ['/#project-scrabble', '/projects/scrabble'],
-    ['/#project-flashcards', '/projects/flashcards'],
-    ['/projects#project-kinetics', '/projects/kinetics'],
-    ['/thoughts#2am-thoughts-before-a-midterm', '/thoughts/2am-thoughts-before-a-midterm'],
+    ['/#project-kinetics', '/projects/mm-kinetics'],
+    ['/#project-scrabble', '/projects/scrabble-solver'],
+    ['/#project-flashcards', '/projects/flashcards-app'],
+    ['/projects#project-kinetics', '/projects/mm-kinetics'],
+    ['/thoughts#2am-thoughts-before-a-midterm', '/thoughts/why-success-feels-average'],
     ['/about', '/'],
   ]) {
     await page.goto(base + source);
@@ -367,11 +371,11 @@ try {
     assert.deepEqual(await page.locator('.site-header').boundingBox(), indexHeader);
     await page.reload();
     await ready();
-    if (path === '/projects/kinetics')
+    if (path === '/projects/mm-kinetics')
       assert.equal(await page.locator('.project-writeup img').count(), 5);
-    else if (path === '/projects/scrabble')
+    else if (path === '/projects/scrabble-solver')
       assert.equal(await page.locator('.project-writeup img').count(), 1);
-    else if (path === '/projects/flashcards')
+    else if (path === '/projects/flashcards-app')
       assert.equal(await page.locator('.detail-content p').count(), 4);
     else if (path.startsWith('/projects/'))
       assert.equal(await page.locator('.detail-content').innerText(), '');

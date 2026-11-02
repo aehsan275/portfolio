@@ -44,7 +44,7 @@ export const education = {
 
 export const projects = [
   {
-    id: 'kinetics',
+    id: 'mm-kinetics',
     details: [] as readonly string[],
     writeup: {
       subtitle: '',
@@ -144,7 +144,7 @@ export const projects = [
     repository: 'https://github.com/aehsan275/mmkinetics',
   },
   {
-    id: 'scrabble',
+    id: 'scrabble-solver',
     details: [] as readonly string[],
     writeup: {
       subtitle: '',
@@ -214,7 +214,7 @@ export const projects = [
     repository: 'https://github.com/aehsan275/scrabblesolver',
   },
   {
-    id: 'flashcards',
+    id: 'flashcards-app',
     details: [
       'this project is lost in the trenches unfortunately.',
       '### the app',
@@ -238,7 +238,7 @@ export type Project = (typeof projects)[number];
 
 export const thoughts = [
   {
-    id: '2am-thoughts-before-a-midterm',
+    id: 'why-success-feels-average',
     title: 'why success feels average',
     summary: 'you get there, and somehow the distance was the only part that felt real.',
     details: [
