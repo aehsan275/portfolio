@@ -542,7 +542,8 @@ function readLocation(): Location {
     '/education': '/what-ive-done#education',
     '/projects/kinetics': '/projects/mm-kinetics',
     '/projects/scrabble': '/projects/scrabble-solver',
-    '/projects/flashcards': '/projects/flashcards-app',
+    '/projects/flashcards': '/projects',
+    '/projects/flashcards-app': '/projects',
     '/thoughts/2am-thoughts-before-a-midterm': '/thoughts/why-success-feels-average',
     '/projects/raytracer': '/projects',
     '/projects/http': '/projects',
@@ -551,7 +552,8 @@ function readLocation(): Location {
   const oldFragments: Record<string, string> = {
     '#project-kinetics': '/projects/mm-kinetics',
     '#project-scrabble': '/projects/scrabble-solver',
-    '#project-flashcards': '/projects/flashcards-app',
+    '#project-flashcards': '/projects',
+    '#project-flashcards-app': '/projects',
     '#2am-thoughts-before-a-midterm': '/thoughts/why-success-feels-average',
   };
   let destination = legacy[path];

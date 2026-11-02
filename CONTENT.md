@@ -2,13 +2,12 @@
 
 The user's answers in this chat take precedence over previous portfolio copy, generated drafts, and résumé availability dates.
 
-- Identity: Abdullah Ehsan / عبداللہ; current location Waterloo; display “cs @ uwaterloo”; seeking winter 2027 internships. Confirmed directly by the user.
+- Identity: Abdullah Ehsan / عبداللہ; current location Waterloo; display “cs @ uwaterloo”; seeking summer 2027 internships. Confirmed directly by the user.
 - Tone: lowercase, casual, brief. Audience: engineering founders and SWE recruiters. No location/heritage story about Sialkot or Lahore; no GPA or coursework.
 - Experience: the supplied résumés list AI Engineering Intern (August–September 2026) and Software Engineering Intern (May–August 2025) at NexaQuanta. The user’s latest instruction overrides the first title to Software Engineering Intern; the site now uses that title for both internships. User requested the brief agents/RAG summary, no remote status or accomplishment metrics.
-- Projects: exactly MM Kinetics, Scrabble Solver, and Flashcards App. MM Kinetics and Scrabble lead the overview. All other projects and in-progress work are excluded by the user's explicit selection.
+- Projects: MM Kinetics and Scrabble Solver. The user requested removing Flashcards App.
 - MM Kinetics: public README at https://github.com/aehsan275/mmkinetics and the supplied résumé. Copy describes curve fitting, bootstrap uncertainty, grouped validation, and conformal intervals; synthetic examples are identified. No benchmark numbers are repeated on the page.
 - Scrabble: the résumé describes Python, Tkinter, anchor squares, cross-checks, and Trie/DAWG search. User confirms it was a school project without a repository. Do not invent a public URL or present it as C++.
-- Flashcards: the supplied résumés describe a Java Swing desktop app with MVC. The generic Markdown résumé draft contains inconsistent web-stack claims and was not used.
 - LinkedIn: the exact URL comes from the PDF's link annotation: https://www.linkedin.com/in/abdullah-ehsan-960425399/.
 - Résumé: public/resume.pdf is a copy of the supplied resumeabdullah.pdf (October 9). The newer Word draft contains placeholder profile links and an outdated summer availability line, so it was used to corroborate content rather than served as the download.
 - Contact: a2ehsan@uwaterloo.ca and https://github.com/aehsan275 were supplied directly by the user.

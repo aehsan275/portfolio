@@ -2,7 +2,7 @@ export const profile = {
   name: 'Abdullah Ehsan',
   affiliation: 'cs @ uwaterloo.',
   introduction:
-    'i spend a lot of time going down rabbit holes and building things along the way. currently looking for summer 2027 opportunities.',
+    'looking for summer 2027 internships.',
   email: 'mailto:a2ehsan@uwaterloo.ca',
   github: 'https://github.com/aehsan275',
   linkedin: 'https://www.linkedin.com/in/abdullah-ehsan-960425399/',
@@ -212,26 +212,6 @@ export const projects = [
     tech: ['python', 'tkinter', 'trie'],
     note: '',
     repository: 'https://github.com/aehsan275/scrabblesolver',
-  },
-  {
-    id: 'flashcards-app',
-    details: [
-      'this project is lost in the trenches unfortunately.',
-      '### the app',
-      'i built this flashcards app for a school project using java and swing. it let users keep multiple sets of cards without needing an account.',
-      'there was also a button to use the gemini api. when a card was flipped to its definition side, gemini returned a definition for the current card; on the keyword side, it generated a new card based on the existing ones. integrating the api in java using curl was the hardest part of the project.',
-      '### what i learned',
-      'building it taught me about object-oriented programming, including encapsulation, and design patterns like model-view-controller (mvc). i used mvc to separate the model, which handled the backend and gemini integration, from the graphical interface.',
-    ],
-    writeup: null,
-    title: 'flashcards app',
-    summary: 'a desktop study tool.',
-    description: 'a desktop flashcards app built with java, swing, and the gemini api.',
-    detail:
-      'uses an mvc structure to separate the cards and application state from the interface and user actions.',
-    tech: ['java', 'swing', 'mvc', 'gemini api'],
-    note: '',
-    repository: '',
   },
 ] as const;
 export type Project = (typeof projects)[number];

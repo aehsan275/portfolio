@@ -19,7 +19,6 @@ const routes = [
   ['/thoughts', 'thoughts'],
   ['/projects/mm-kinetics', 'projects'],
   ['/projects/scrabble-solver', 'projects'],
-  ['/projects/flashcards-app', 'projects'],
   ['/thoughts/why-success-feels-average', 'thoughts'],
   ['/thoughts/the-more-you-know-the-less-you-do', 'thoughts'],
   ['/thoughts/who-are-we', 'thoughts'],
@@ -181,6 +180,7 @@ try {
       );
       assert.equal(await page.locator('.ascii-sky').getAttribute('aria-hidden'), 'true');
       if (path === '/') {
+        assert.equal(await page.locator('.intro-bio').innerText(), 'looking for summer 2027 internships.');
         assert.equal(
           await page.locator('.project-entry').count(),
           0,
@@ -196,7 +196,7 @@ try {
         if (width >= 1024) assert(intro.x + intro.width <= summary.x + 1, 'two-column about');
         else assert(summary.y >= intro.y + intro.height, 'stacked mobile about');
       } else {
-        if (path === '/projects') assert.equal(await page.locator('.project-entry').count(), 3);
+        if (path === '/projects') assert.equal(await page.locator('.project-entry').count(), 2);
         if (path === '/what-ive-done')
           assert.equal(await page.locator('.experience-roles > div').count(), 2);
         if (path === '/thoughts') {
@@ -229,8 +229,6 @@ try {
           assert.equal(await page.locator('.writeup-section').count(), 5);
           assert.equal(await page.locator('.project-writeup img').count(), 1);
           assert.equal(await page.locator('.writeup-nav a').count(), 5);
-        } else if (path === '/projects/flashcards-app') {
-          assert.equal(await page.locator('.detail-content p').count(), 4);
         } else if (path.startsWith('/projects/'))
           assert.equal(
             await page.locator('.detail-content').innerText(),
@@ -336,16 +334,17 @@ try {
     ['/education', '/what-ive-done#education'],
     ['/projects/kinetics', '/projects/mm-kinetics'],
     ['/projects/scrabble', '/projects/scrabble-solver'],
-    ['/projects/flashcards', '/projects/flashcards-app'],
+    ['/projects/flashcards', '/projects'],
+    ['/projects/flashcards-app', '/projects'],
     ['/thoughts/2am-thoughts-before-a-midterm', '/thoughts/why-success-feels-average'],
-    ...['mm-kinetics', 'scrabble-solver', 'flashcards-app'].map((id) => ['/projects/' + id, '/projects/' + id]),
+    ...['mm-kinetics', 'scrabble-solver'].map((id) => ['/projects/' + id, '/projects/' + id]),
     ...['raytracer', 'http', 'rag'].map((id) => ['/projects/' + id, '/projects']),
     ['/#experience', '/what-ive-done#experience'],
     ['/#education', '/what-ive-done#education'],
     ['/#projects', '/projects'],
     ['/#project-kinetics', '/projects/mm-kinetics'],
     ['/#project-scrabble', '/projects/scrabble-solver'],
-    ['/#project-flashcards', '/projects/flashcards-app'],
+    ['/#project-flashcards', '/projects'],
     ['/projects#project-kinetics', '/projects/mm-kinetics'],
     ['/thoughts#2am-thoughts-before-a-midterm', '/thoughts/why-success-feels-average'],
     ['/about', '/'],
@@ -375,8 +374,6 @@ try {
       assert.equal(await page.locator('.project-writeup img').count(), 5);
     else if (path === '/projects/scrabble-solver')
       assert.equal(await page.locator('.project-writeup img').count(), 1);
-    else if (path === '/projects/flashcards-app')
-      assert.equal(await page.locator('.detail-content p').count(), 4);
     else if (path.startsWith('/projects/'))
       assert.equal(await page.locator('.detail-content').innerText(), '');
     else

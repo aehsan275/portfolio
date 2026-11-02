@@ -6,7 +6,7 @@ Abdullah Ehsan’s web portfolio gives hiring engineers a quick overview of his 
 
 ## Homepage
 
-A centered introduction on the left alternates Abdullah’s English and Urdu names. The right column groups previously, studying, and projects. Nexaquanta, Waterloo, and project names share the same size and weight. MM Kinetics and Scrabble Solver are featured; “more projects” opens the separate Projects page. Contact links include the visible email address, GitHub, LinkedIn, X, and Cal.com. The intro says cs @ uwaterloo and explicitly seeks a winter 2027 software engineering internship. Project summaries describe behavior rather than listing topics.
+A centered introduction on the left alternates Abdullah’s English and Urdu names. The right column groups previously, studying, and projects. Nexaquanta, Waterloo, and project names share the same size and weight. MM Kinetics and Scrabble Solver are featured; “more projects” opens the separate Projects page. Contact links include the visible email address, GitHub, LinkedIn, X, and Cal.com. The intro explicitly seeks summer 2027 internships. Project summaries describe behavior rather than listing topics.
 
 ## Interaction
 
@@ -22,7 +22,7 @@ React 19, TypeScript, Vite, Tailwind CSS 4, daisyUI 5, self-hosted fonts, and Pl
 
 ## Approved content
 
-Use lowercase, casual writing. Include only MM Kinetics, the school Scrabble Solver, and the Java Swing flashcards app. NexaQuanta is past experience: Software Engineering Intern (August–September 2026) and Software Engineering Intern (May–August 2025), with a brief agents/RAG summary. Do not include remote status, employer metrics, GPA, coursework, other activities, or personal Lahore/Sialkot details. The résumé remains the place for detailed accomplishments and numbers. See CONTENT.md for source notes.
+Use lowercase, casual writing. Include MM Kinetics and the school Scrabble Solver. NexaQuanta is past experience: Software Engineering Intern (August–September 2026) and Software Engineering Intern (May–August 2025), with a brief agents/RAG summary. See CONTENT.md for source notes.
 
 Contact update: the footer displays a2ehsan [at] uwaterloo [dot] ca on a separate line above the social links, with a native mailto destination. The visible address is obfuscated; the mailto remains readable in the DOM. X and cal currently lead to https://x.com/ and https://cal.com/ as explicitly requested; they are not personal profile or booking URLs. The résumé link is removed; the existing PDF is retained as an asset.
 
