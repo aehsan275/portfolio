@@ -86,7 +86,7 @@ export async function checkTheme(browser, base) {
     await ready('charcoal');
     await page
       .getByRole('navigation', { name: 'main navigation' })
-      .getByRole('link', { name: 'what i’ve done' })
+      .getByRole('link', { name: 'experience' })
       .click();
     await ready('charcoal');
     const workScene = await scene();

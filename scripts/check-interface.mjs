@@ -14,7 +14,7 @@ await fs.mkdir('.qa/pages', { recursive: true });
 await fs.mkdir('.qa/dots', { recursive: true });
 const routes = [
   ['/', 'about'],
-  ['/what-ive-done', 'what i’ve done'],
+  ['/experience', 'experience'],
   ['/projects', 'projects'],
   ['/thoughts', 'thoughts'],
   ['/projects/mm-kinetics', 'projects'],
@@ -53,7 +53,7 @@ try {
         const needsScroll = root.scrollHeight - slot.offsetHeight > root.clientHeight + 1;
         return !slot.hidden === needsScroll;
       });
-      if (path === '/what-ive-done') {
+      if (path === '/experience') {
         assert.equal(await page.locator('.education-entry').count(), 2);
         assert.equal(await page.locator('.role-description').count(), 2);
         await page.getByText('CPSC217', { exact: true }).waitFor();
@@ -133,7 +133,7 @@ try {
         '0px',
         'compact footer rows',
       );
-      if (path === '/what-ive-done' || path === '/projects') {
+      if (path === '/experience' || path === '/projects') {
         const headingType = await page.locator('.reading-section h2').evaluateAll((nodes) =>
           nodes.map((el) => {
             const style = getComputedStyle(el);
@@ -197,7 +197,7 @@ try {
         else assert(summary.y >= intro.y + intro.height, 'stacked mobile about');
       } else {
         if (path === '/projects') assert.equal(await page.locator('.project-entry').count(), 2);
-        if (path === '/what-ive-done')
+        if (path === '/experience')
           assert.equal(await page.locator('.experience-roles > div').count(), 2);
         if (path === '/thoughts') {
           assert.equal(await page.locator('.thought-entry').count(), 3);
@@ -285,7 +285,7 @@ try {
   await page.evaluate(() => {
     document.documentElement.style.removeProperty('overflow-y');
   });
-  for (const label of ['projects', 'thoughts', 'what i’ve done', 'about']) {
+  for (const label of ['projects', 'thoughts', 'experience', 'about']) {
     await nav().getByRole('link', { name: label, exact: true }).click();
     await ready();
     assert.deepEqual(
@@ -307,13 +307,13 @@ try {
   await page.goBack();
   await page.waitForURL(base + '/projects');
   await page.goBack();
-  await page.waitForURL(base + '/what-ive-done');
+  await page.waitForURL(base + '/experience');
   await page.goForward();
   await page.waitForURL(base + '/projects');
   await nav().getByRole('link', { name: 'about', exact: true }).click();
   for (const [name, path, hash] of [
-    ['nexaquanta', '/what-ive-done', '#experience'],
-    ['uwaterloo.', '/what-ive-done', '#education'],
+    ['nexaquanta', '/experience', '#experience'],
+    ['uwaterloo.', '/experience', '#education'],
     ['mm kinetics', '/projects/mm-kinetics', ''],
     ['scrabble solver', '/projects/scrabble-solver', ''],
     ['more projects', '/projects', ''],
@@ -330,8 +330,8 @@ try {
     );
   }
   for (const [source, destination] of [
-    ['/experience', '/what-ive-done#experience'],
-    ['/education', '/what-ive-done#education'],
+    ['/what-ive-done', '/experience'],
+    ['/education', '/experience#education'],
     ['/projects/kinetics', '/projects/mm-kinetics'],
     ['/projects/scrabble', '/projects/scrabble-solver'],
     ['/projects/flashcards', '/projects'],
@@ -339,8 +339,8 @@ try {
     ['/thoughts/2am-thoughts-before-a-midterm', '/thoughts/why-success-feels-average'],
     ...['mm-kinetics', 'scrabble-solver'].map((id) => ['/projects/' + id, '/projects/' + id]),
     ...['raytracer', 'http', 'rag'].map((id) => ['/projects/' + id, '/projects']),
-    ['/#experience', '/what-ive-done#experience'],
-    ['/#education', '/what-ive-done#education'],
+    ['/#experience', '/experience#experience'],
+    ['/#education', '/experience#education'],
     ['/#projects', '/projects'],
     ['/#project-kinetics', '/projects/mm-kinetics'],
     ['/#project-scrabble', '/projects/scrabble-solver'],
@@ -398,7 +398,7 @@ try {
     await page.getByRole('link', { name: 'return to the homepage', exact: true }).click();
     await page.waitForURL(base + '/');
   }
-  await page.goto(base + '/what-ive-done');
+  await page.goto(base + '/experience');
   await ready();
   await page.getByRole('button', { name: 'back to top' }).click();
   await page.waitForFunction(() => scrollY === 0);
@@ -547,7 +547,7 @@ try {
       .locator('.ascii-sky')
       .evaluate((c) => ({ seed: c.dataset.motifSeed, motifs: JSON.parse(c.dataset.motifLayout) }));
   const firstScene = await readScene();
-  for (const label of ['what i’ve done', 'projects', 'thoughts']) {
+  for (const label of ['experience', 'projects', 'thoughts']) {
     await nav().getByRole('link', { name: label, exact: true }).click();
     await page.waitForFunction(() => document.activeElement === document.querySelector('main h1'));
     const next = await readScene();

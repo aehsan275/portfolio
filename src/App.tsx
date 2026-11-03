@@ -148,7 +148,7 @@ function Home({ reduced, initialHome }: { reduced: boolean; initialHome: boolean
                   cs @{' '}
                   <a
                     className="d-link summary-link organization-name"
-                    href="/what-ive-done#education"
+                    href="/experience#education"
                   >
                     <OrganizationMark name="waterloo" />
                     uwaterloo.
@@ -163,7 +163,7 @@ function Home({ reduced, initialHome }: { reduced: boolean; initialHome: boolean
                   swe @{' '}
                   <a
                     className="d-link summary-link organization-name"
-                    href="/what-ive-done#experience"
+                    href="/experience#experience"
                   >
                     <OrganizationMark name="nexaquanta" />
                     nexaquanta
@@ -199,7 +199,7 @@ function Home({ reduced, initialHome }: { reduced: boolean; initialHome: boolean
 
 const PAGES = [
   { path: '/', label: 'about' },
-  { path: '/what-ive-done', label: 'what i’ve done' },
+  { path: '/experience', label: 'experience' },
   { path: '/projects', label: 'projects' },
   { path: '/thoughts', label: 'thoughts' },
 ];
@@ -404,10 +404,10 @@ function PageContent({
     );
   return (
     <main id="main" className="inner-page portfolio-details" tabIndex={-1}>
-      {path === '/what-ive-done' ? (
+      {path === '/experience' ? (
         <>
           <h1 data-reading tabIndex={-1}>
-            what i’ve done.
+            experience.
           </h1>
           <section className="reading-section" data-reading aria-labelledby="experience">
             <h2 id="experience" tabIndex={-1}>
@@ -538,8 +538,8 @@ function readLocation(): Location {
   let path = url.pathname.replace(/\/+$/, '') || '/';
   const legacy: Record<string, string> = {
     '/about': '/',
-    '/experience': '/what-ive-done#experience',
-    '/education': '/what-ive-done#education',
+    '/what-ive-done': '/experience',
+    '/education': '/experience#education',
     '/projects/kinetics': '/projects/mm-kinetics',
     '/projects/scrabble': '/projects/scrabble-solver',
     '/projects/flashcards': '/projects',
@@ -560,7 +560,7 @@ function readLocation(): Location {
   if ((path === '/' || path === '/projects' || path === '/thoughts') && oldFragments[url.hash])
     destination = oldFragments[url.hash];
   if (path === '/') {
-    if (['#experience', '#education'].includes(url.hash)) destination = '/what-ive-done' + url.hash;
+    if (['#experience', '#education'].includes(url.hash)) destination = '/experience' + url.hash;
     else if (url.hash === '#projects') destination = '/projects';
     else if (projects.some((p) => url.hash === '#project-' + p.id))
       destination = '/projects/' + url.hash.slice('#project-'.length);
