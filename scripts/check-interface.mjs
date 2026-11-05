@@ -366,7 +366,14 @@ try {
     await page.locator('main a[href="' + path + '"]').click();
     await page.waitForURL(base + path);
     await page.waitForFunction(() => document.activeElement === document.querySelector('main h1'));
-    assert.equal(await page.title(), 'abdullah ehsan');
+    const titles = {
+      '/projects/mm-kinetics': 'mm kinetics',
+      '/projects/scrabble-solver': 'scrabble solver',
+      '/thoughts/why-success-feels-average': 'why success feels average',
+      '/thoughts/the-more-you-know-the-less-you-do': 'the more you know, the less you do',
+      '/thoughts/who-are-we': 'who are we?',
+    };
+    assert.equal(await page.title(), `${titles[path]} · abdullah ehsan`);
     assert.deepEqual(await page.locator('.site-header').boundingBox(), indexHeader);
     await page.reload();
     await ready();

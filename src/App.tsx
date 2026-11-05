@@ -628,7 +628,6 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
       ?.setAttribute('content', metadata.description);
     document.querySelector('meta[property="og:url"]')?.setAttribute('content', metadata.url);
     document.querySelector('link[rel="canonical"]')?.setAttribute('href', metadata.url);
-    if (mode === 'hash' && !changedPage) return;
     let active = true;
     document.fonts.ready.then(() => {
       if (!active) return;
