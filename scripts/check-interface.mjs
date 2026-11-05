@@ -426,8 +426,7 @@ try {
     assert.equal(await footer.getByRole('link', { name, exact: true }).getAttribute('href'), url);
   assert.equal(await footer.getByRole('link', { name: 'résumé', exact: true }).count(), 0);
   const resume = await page.request.get(base + '/resume.pdf');
-  assert.equal(resume.status(), 200);
-  assert((await resume.body()).subarray(0, 5).toString() === '%PDF-');
+  assert.notEqual((await resume.body()).subarray(0, 5).toString(), '%PDF-');
   await page.keyboard.press('Tab');
   assert.equal(await page.evaluate(() => document.activeElement.textContent), 'skip to content');
   await page.keyboard.press('Enter');

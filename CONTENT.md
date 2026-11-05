@@ -9,12 +9,12 @@ The user's answers in this chat take precedence over previous portfolio copy, ge
 - MM Kinetics: public README at https://github.com/aehsan275/mmkinetics and the supplied résumé. Copy describes curve fitting, bootstrap uncertainty, grouped validation, and conformal intervals; synthetic examples are identified. No benchmark numbers are repeated on the page.
 - Scrabble: the résumé describes Python, Tkinter, anchor squares, cross-checks, and Trie/DAWG search. User confirms it was a school project without a repository. Do not invent a public URL or present it as C++.
 - LinkedIn: the exact URL comes from the PDF's link annotation: https://www.linkedin.com/in/abdullah-ehsan-960425399/.
-- Résumé: public/resume.pdf is a copy of the supplied resumeabdullah.pdf (October 9). The newer Word draft contains placeholder profile links and an outdated summer availability line, so it was used to corroborate content rather than served as the download.
+- Résumé: keep the supplied PDF private and do not publish it on the site.
 - Contact: a2ehsan@uwaterloo.ca and https://github.com/aehsan275 were supplied directly by the user.
 
 No publication, new employment claims, metrics, or new cultural decorations are included.
 
-Contact update: the footer displays a2ehsan [at] uwaterloo [dot] ca on a separate line above the social links, with a native mailto destination. The visible address is obfuscated; the mailto remains readable in the DOM. X and cal currently lead to https://x.com/ and https://cal.com/ as explicitly requested; they are not personal profile or booking URLs. The résumé link is removed; the existing PDF is retained as an asset.
+Contact update: the footer displays a2ehsan [at] uwaterloo [dot] ca on a separate line above the social links, with a native mailto destination. The visible address is obfuscated; the mailto remains readable in the DOM. X and cal currently lead to https://x.com/ and https://cal.com/ as explicitly requested; they are not personal profile or booking URLs. Do not publish or link the résumé PDF.
 
 Education update from the user: Waterloo computer science, 2026–2031 (the user confirmed the end year). University of Calgary computer science course, summer 2025, explicitly taken while in high school; this is not a transfer or a degree enrollment claim. No course title, number, or credit claim is added.
 
