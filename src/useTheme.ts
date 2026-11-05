@@ -13,7 +13,9 @@ function savedTheme(): Theme | null {
 }
 
 function systemTheme(): Theme {
-  return matchMedia('(prefers-color-scheme: dark)').matches ? 'charcoal' : 'paper';
+  return typeof matchMedia !== 'undefined' && matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'charcoal'
+    : 'paper';
 }
 
 export function useTheme() {

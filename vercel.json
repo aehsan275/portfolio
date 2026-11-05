@@ -1,3 +1,23 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "redirects": [
+    { "source": "/about", "destination": "/", "permanent": true },
+    { "source": "/what-ive-done", "destination": "/experience", "permanent": true },
+    { "source": "/education", "destination": "/experience#education", "permanent": true },
+    { "source": "/projects/kinetics", "destination": "/projects/mm-kinetics", "permanent": true },
+    {
+      "source": "/projects/scrabble",
+      "destination": "/projects/scrabble-solver",
+      "permanent": true
+    },
+    { "source": "/projects/flashcards", "destination": "/projects", "permanent": true },
+    { "source": "/projects/flashcards-app", "destination": "/projects", "permanent": true },
+    { "source": "/projects/raytracer", "destination": "/projects", "permanent": true },
+    { "source": "/projects/http", "destination": "/projects", "permanent": true },
+    { "source": "/projects/rag", "destination": "/projects", "permanent": true },
+    {
+      "source": "/thoughts/2am-thoughts-before-a-midterm",
+      "destination": "/thoughts/why-success-feels-average",
+      "permanent": true
+    }
+  ]
 }

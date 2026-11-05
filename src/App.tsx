@@ -3,12 +3,14 @@ import { education, experience, profile, projects, thoughts } from './data';
 import { DotBackground } from './components/DotBackground';
 import { FloralBorder } from './components/FloralBorder';
 import { useTheme } from './useTheme';
+import { pageMetadata } from './metadata';
 import './styles/daisy.css';
 import './styles.css';
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(
-    () => matchMedia('(prefers-reduced-motion: reduce)').matches,
+    () =>
+      typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches,
   );
   useEffect(() => {
     const query = matchMedia('(prefers-reduced-motion: reduce)');
@@ -66,11 +68,15 @@ function CsWebring() {
   const ring = 'https://cs.uwatering.com/#abdullahehsan.vercel.app';
   return (
     <nav className="cs-webring" aria-label="Waterloo CS webring">
-      <a href={`${ring}?nav=prev`} aria-label="Previous site in the Waterloo CS webring">←</a>
+      <a href={`${ring}?nav=prev`} aria-label="Previous site in the Waterloo CS webring">
+        ←
+      </a>
       <a href={ring} className="cs-webring-mark" aria-label="Waterloo CS webring">
         <span aria-hidden="true" />
       </a>
-      <a href={`${ring}?nav=next`} aria-label="Next site in the Waterloo CS webring">→</a>
+      <a href={`${ring}?nav=next`} aria-label="Next site in the Waterloo CS webring">
+        →
+      </a>
     </nav>
   );
 }
@@ -146,10 +152,7 @@ function Home({ reduced, initialHome }: { reduced: boolean; initialHome: boolean
                 </h2>
                 <p className="study-line">
                   cs @{' '}
-                  <a
-                    className="d-link summary-link organization-name"
-                    href="/experience#education"
-                  >
+                  <a className="d-link summary-link organization-name" href="/experience#education">
                     <OrganizationMark name="waterloo" />
                     uwaterloo.
                   </a>
@@ -583,9 +586,11 @@ function readLocation(): Location {
   return { path, hash: url.hash, search: url.search };
 }
 
-export default function App() {
+export default function App({ initialPath }: { initialPath?: string } = {}) {
   const { theme, chooseTheme } = useTheme();
-  const [route, setRoute] = useState(readLocation);
+  const [route, setRoute] = useState(() =>
+    initialPath ? { path: initialPath, hash: '', search: '' } : readLocation(),
+  );
   const initialHome = useRef(route.path === '/');
   const reduced = useReducedMotion();
   const intent = useRef<'load' | 'push' | 'pop' | 'hash'>('load');
@@ -612,7 +617,17 @@ export default function App() {
       changedPage = previousPath.current !== route.path;
     intent.current = 'load';
     previousPath.current = route.path;
-    document.title = 'abdullah ehsan';
+    const metadata = pageMetadata(route.path);
+    document.title = metadata.title;
+    document
+      .querySelector('meta[name="description"]')
+      ?.setAttribute('content', metadata.description);
+    document.querySelector('meta[property="og:title"]')?.setAttribute('content', metadata.title);
+    document
+      .querySelector('meta[property="og:description"]')
+      ?.setAttribute('content', metadata.description);
+    document.querySelector('meta[property="og:url"]')?.setAttribute('content', metadata.url);
+    document.querySelector('link[rel="canonical"]')?.setAttribute('href', metadata.url);
     if (mode === 'hash' && !changedPage) return;
     let active = true;
     document.fonts.ready.then(() => {
