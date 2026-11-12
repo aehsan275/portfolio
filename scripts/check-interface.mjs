@@ -58,7 +58,7 @@ try {
         assert.equal(await page.locator('.role-description').count(), 2);
         await page.getByText('CPSC217', { exact: true }).waitFor();
         await page
-          .getByText('took this purely for the love of the game, ended with 97%', { exact: true })
+          .getByText('took this purely for the love of the game, ended with 97%.', { exact: true })
           .waitFor();
         await page
           .getByText('uni math is so different from high school.', { exact: true })
@@ -78,10 +78,8 @@ try {
         );
         assert.equal(marks.length, 3, 'all three institutions have decorative marks');
         assert(
-          marks
-            .slice(0, 2)
-            .every((m) => m.opacity === '1' && m.mask === 'none' && m.image !== 'none'),
-          'NexaQuanta and Waterloo retain their original color logos',
+          marks.every((m) => m.opacity === '1' && m.mask === 'none' && m.image !== 'none'),
+          'all three organizations retain their original color logos',
         );
         assert(
           Math.abs(marks[1].height - marks[2].height) < 0.1,
@@ -319,7 +317,7 @@ try {
   await nav().getByRole('link', { name: 'about', exact: true }).click();
   for (const [name, path, hash] of [
     ['nexaquanta', '/experience', '#experience'],
-    ['uwaterloo.', '/experience', '#education'],
+    ['uwaterloo', '/experience', '#education'],
     ['mm kinetics', '/projects/mm-kinetics', ''],
     ['scrabble solver', '/projects/scrabble-solver', ''],
     ['more projects', '/projects', ''],

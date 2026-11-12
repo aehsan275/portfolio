@@ -157,7 +157,7 @@ function Home({ reduced, initialHome }: { reduced: boolean; initialHome: boolean
                     href="/experience#education"
                   >
                     <OrganizationMark name="waterloo" />
-                    uwaterloo.
+                    uwaterloo
                   </a>
                 </p>
               </section>
@@ -462,7 +462,10 @@ function PageContent({
             <div className="education-entry">
               <div className="education-heading">
                 <h3 className="organization-name">
-                  <a className="d-link" href="https://www.ucalgary.ca/">
+                  <a
+                    className="d-link organization-link organization-link--ucalgary"
+                    href="https://www.ucalgary.ca/"
+                  >
                     <OrganizationMark name="ucalgary" />
                     {education.priorCourse.institution}
                   </a>

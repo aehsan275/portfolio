@@ -50,8 +50,10 @@
   --header-dot: #a8894d;
   --brand-waterloo-ink: #765500;
   --brand-waterloo-highlight: #fdd54f;
-  --brand-nexaquanta-ink: #175eb0;
+  --brand-nexaquanta-ink: #124f98;
   --brand-nexaquanta-highlight: #1877f2;
+  --brand-ucalgary-ink: #8e1528;
+  --brand-ucalgary-highlight: #e30c00;
   --grid-ink: #777264;
   --grid-opacity: 0.22;
   --grid-reading-opacity: 0.14;
@@ -109,6 +111,8 @@
   --brand-waterloo-highlight: #fdd54f;
   --brand-nexaquanta-ink: #8cbeff;
   --brand-nexaquanta-highlight: #1877f2;
+  --brand-ucalgary-ink: #ffac9e;
+  --brand-ucalgary-highlight: #e30c00;
   --grid-ink: #d4cdbf;
   --grid-opacity: 0.16;
   --grid-reading-opacity: 0.1;

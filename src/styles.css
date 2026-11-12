@@ -415,12 +415,10 @@ h1:focus {
 }
 .organization-mark {
   display: inline-block;
+  font-size: 1.1em;
   height: 1cap;
   margin-right: 0.35em;
   vertical-align: baseline;
-  background-color: currentColor;
-  opacity: 0.8;
-  mask-repeat: no-repeat;
 }
 .organization-mark--waterloo {
   width: 0.866cap;
@@ -432,13 +430,14 @@ h1:focus {
   background-image: url('/logos/uwaterloo-color-dark.png');
 }
 .organization-mark--nexaquanta {
-  width: 1.5cap;
+  width: 1.83cap;
   background-image: url('/logos/nexaquanta-hires.png');
-  background-size: 1.674cap 2.043cap;
-  background-position: -0.0837cap -0.4517cap;
+  background-size: 2.043cap 2.043cap;
+  background-position: -0.102cap -0.4517cap;
 }
 .organization-mark--waterloo,
-.organization-mark--nexaquanta {
+.organization-mark--nexaquanta,
+.organization-mark--ucalgary {
   background-color: transparent;
   background-repeat: no-repeat;
   opacity: 1;
@@ -446,26 +445,89 @@ h1:focus {
 .organization-link--waterloo {
   --brand-ink: var(--brand-waterloo-ink);
   --brand-highlight: var(--brand-waterloo-highlight);
+  --marker-tilt: -0.5deg;
 }
 .organization-link--nexaquanta {
   --brand-ink: var(--brand-nexaquanta-ink);
   --brand-highlight: var(--brand-nexaquanta-highlight);
+  --marker-tilt: 0.5deg;
+}
+.organization-link--ucalgary {
+  --brand-ink: var(--brand-ucalgary-ink);
+  --brand-highlight: var(--brand-ucalgary-highlight);
+  --marker-tilt: -0.8deg;
 }
 .d-link.organization-link {
+  position: relative;
+  isolation: isolate;
+  display: inline-block;
+  max-width: 100%;
   color: var(--brand-ink);
-  background-color: color-mix(in srgb, var(--brand-highlight) 12%, transparent);
   padding: 0.06em 0.18em;
-  border-radius: 0.12em;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
   text-decoration-color: color-mix(in srgb, var(--brand-ink) 45%, transparent);
-  transition:
-    background-color 180ms,
-    text-decoration-color 180ms;
+  transition: text-decoration-color 180ms;
+}
+.d-link.organization-link::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  inset: 0.17em -0.08em 0.04em;
+  background: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--brand-highlight) 30%, transparent),
+    color-mix(in srgb, var(--brand-highlight) 23%, transparent) 48%,
+    color-mix(in srgb, var(--brand-highlight) 34%, transparent)
+  );
+  clip-path: polygon(
+    1% 13%,
+    8% 7%,
+    24% 11%,
+    41% 4%,
+    59% 9%,
+    77% 3%,
+    96% 8%,
+    99% 17%,
+    98% 43%,
+    100% 73%,
+    98% 91%,
+    81% 96%,
+    63% 90%,
+    46% 97%,
+    27% 91%,
+    9% 96%,
+    0 87%,
+    2% 57%,
+    0 32%
+  );
+  transform: rotate(var(--marker-tilt));
+  transition: filter 180ms;
+}
+.organization-link--nexaquanta::before {
+  clip-path: polygon(
+    2% 7%,
+    18% 12%,
+    35% 4%,
+    55% 10%,
+    73% 5%,
+    98% 11%,
+    100% 29%,
+    98% 55%,
+    99% 88%,
+    85% 94%,
+    67% 89%,
+    47% 96%,
+    28% 91%,
+    3% 97%,
+    0 76%,
+    1% 44%
+  );
 }
 .d-link.organization-link:hover {
-  background-color: color-mix(in srgb, var(--brand-highlight) 22%, transparent);
   text-decoration-color: var(--brand-ink);
+}
+.d-link.organization-link:hover::before {
+  filter: saturate(1.25);
 }
 .d-link.organization-link:focus-visible {
   outline-color: var(--brand-ink);
@@ -960,10 +1022,10 @@ html[data-page-hidden='true'] .name > span {
 }
 
 .organization-mark--ucalgary {
-  width: 0.781cap;
-  mask-image: url('/logos/ucalgary.svg');
-  mask-size: 6.337cap 2.598cap;
-  mask-position: -2.42cap -0.829cap;
+  width: 0.784cap;
+  background-image: url('/logos/ucalgary-color.svg');
+  background-size: contain;
+  background-position: center;
 }
 
 .entry-title {
