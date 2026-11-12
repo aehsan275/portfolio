@@ -42,7 +42,9 @@ export async function checkTheme(browser, base) {
       'system dark default',
     );
     assert.equal(
-      await page.getByRole('button', { name: 'dark', exact: true }).getAttribute('aria-pressed'),
+      await page
+        .getByRole('button', { name: 'Switch to light mode', exact: true })
+        .getAttribute('aria-pressed'),
       'true',
     );
     const colors = await page.evaluate(() => {
@@ -76,7 +78,7 @@ export async function checkTheme(browser, base) {
     const lightRaster = await raster();
     assert.notDeepEqual(lightRaster, darkRaster, 'canvas dots are recolored');
     assert.deepEqual(await geometry(), originalGeometry, 'theme preserves header geometry');
-    await page.getByRole('button', { name: 'dark', exact: true }).click();
+    await page.getByRole('button', { name: 'Switch to dark mode', exact: true }).click();
     await ready('charcoal');
     assert.deepEqual(await scene(), original, 'manual theme change preserves the entire scene');
     assert.deepEqual(await raster(), darkRaster, 'returning to dark restores the same dot raster');
@@ -108,13 +110,12 @@ export async function checkTheme(browser, base) {
     await page.goto(base + '/thoughts/who-are-we');
     await ready('charcoal');
     await page.screenshot({ path: '.qa/theme/thought-dark-1440.png', fullPage: true });
-    await page.getByRole('button', { name: 'light', exact: true }).focus();
+    await page.getByRole('button', { name: 'Switch to light mode', exact: true }).focus();
     await page.keyboard.press('Enter');
     await ready('paper');
-    await page.keyboard.press('Tab');
     assert.equal(
       await page
-        .getByRole('button', { name: 'dark', exact: true })
+        .getByRole('button', { name: 'Switch to dark mode', exact: true })
         .evaluate((el) => el === document.activeElement),
       true,
     );
@@ -147,7 +148,7 @@ export async function checkTheme(browser, base) {
     const tab = await blocked.newPage();
     await tab.goto(base);
     await tab.waitForSelector('.portfolio[data-theme="charcoal"]');
-    await tab.getByRole('button', { name: 'light', exact: true }).click();
+    await tab.getByRole('button', { name: 'Switch to light mode', exact: true }).click();
     await tab.waitForSelector('.portfolio[data-theme="paper"]');
   } finally {
     await blocked.close();

@@ -1080,23 +1080,28 @@ html[data-page-hidden='true'] .name > span {
   font: 400 var(--type-small)/1.5 var(--font-heading);
 }
 .theme-control .d-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0;
   min-width: 44px;
   min-height: 44px;
   border: 0;
   background: transparent;
   font: inherit;
-  color: var(--ink-muted);
+  color: color-mix(in srgb, var(--ornament-gold) 80%, var(--ink-heading));
+  border-radius: 50%;
   cursor: pointer;
   text-underline-offset: 0.22em;
   text-decoration-thickness: 1px;
 }
-.theme-control button[aria-pressed='true'] {
-  color: var(--color-secondary);
-  text-decoration: underline;
+.theme-toggle svg {
+  width: 23px;
+  height: 23px;
 }
 .theme-control button:hover {
-  color: var(--ink-heading);
+  color: var(--color-secondary);
+  background: var(--color-base-200);
 }
 .theme-control button:focus-visible {
   outline: 2px solid var(--color-secondary);
@@ -1115,7 +1120,7 @@ html[data-page-hidden='true'] .name > span {
   }
   .page-navigation::after {
     content: '';
-    flex: 0 0 112px;
+    flex: 0 0 44px;
     height: 44px;
   }
   .theme-control {

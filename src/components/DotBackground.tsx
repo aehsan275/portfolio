@@ -262,20 +262,25 @@ export function DotBackground({
       cacheContext.fillStyle = dotPattern;
       cacheContext.globalAlpha = query.matches ? dotOpacity : mobileOpacity;
       cacheContext.fillRect(0, 0, canvas.width, canvas.height);
-      for (const r of regions) {
-        const left = Math.round(r.left * scale),
-          top = Math.round(r.top * scale);
-        const right = Math.round(r.right * scale),
-          bottom = Math.round(r.bottom * scale);
-        cacheContext.save();
-        cacheContext.beginPath();
-        cacheContext.rect(left, top, right - left, bottom - top);
-        cacheContext.clip();
-        cacheContext.clearRect(left, top, right - left, bottom - top);
-        cacheContext.globalAlpha = query.matches ? readingOpacity : mobileReadingOpacity;
-        cacheContext.fillRect(0, 0, canvas.width, canvas.height);
-        cacheContext.restore();
-      }
+      // Feather a union of reading areas so overlapping sections never compound the fade.
+      // This only softens opacity: the dot lattice itself stays crisp and fixed in place.
+      cacheContext.save();
+      cacheContext.globalCompositeOperation = 'destination-out';
+      const fieldOpacity = query.matches ? dotOpacity : mobileOpacity;
+      const textOpacity = query.matches ? readingOpacity : mobileReadingOpacity;
+      cacheContext.globalAlpha = fieldOpacity > 0 ? 1 - textOpacity / fieldOpacity : 0;
+      cacheContext.fillStyle = '#000';
+      cacheContext.filter = `blur(${24 * scale}px)`;
+      cacheContext.beginPath();
+      for (const r of regions)
+        cacheContext.rect(
+          r.left * scale,
+          r.top * scale,
+          (r.right - r.left) * scale,
+          (r.bottom - r.top) * scale,
+        );
+      cacheContext.fill();
+      cacheContext.restore();
       cacheContext.globalAlpha = 1;
       let motifCells = 0;
       const motifs: {

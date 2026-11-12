@@ -721,23 +721,39 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
               </a>
             ))}
           </nav>
-          <div className="theme-control" role="group" aria-label="Color theme">
+          <div className="theme-control">
             <button
-              className="d-btn d-btn-link"
+              className="d-btn d-btn-link theme-toggle"
               type="button"
-              aria-pressed={theme === 'paper'}
-              onClick={() => chooseTheme('paper')}
-            >
-              light
-            </button>
-            <span aria-hidden="true">/</span>
-            <button
-              className="d-btn d-btn-link"
-              type="button"
+              aria-label={theme === 'paper' ? 'Switch to dark mode' : 'Switch to light mode'}
+              title={theme === 'paper' ? 'Switch to dark mode' : 'Switch to light mode'}
               aria-pressed={theme === 'charcoal'}
-              onClick={() => chooseTheme('charcoal')}
+              onClick={() => chooseTheme(theme === 'paper' ? 'charcoal' : 'paper')}
             >
-              dark
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.35"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                {theme === 'paper' ? (
+                  <>
+                    <path d="M19.8 14.5A8.2 8.2 0 0 1 9.5 4.2a8.3 8.3 0 1 0 10.3 10.3Z" />
+                    <path
+                      d="m17.5 3 .5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5-1.5-.5 1.5-.5Z"
+                      strokeWidth="1"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <circle cx="12" cy="12" r="4" />
+                    <path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42m0-14.14-1.42 1.42m-11.3 11.3-1.42 1.42" />
+                  </>
+                )}
+              </svg>
             </button>
           </div>
         </header>
