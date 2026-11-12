@@ -1,6 +1,11 @@
 # Organization marks
 
-These source PNGs are unmodified. CSS uses their transparency as a monochrome mask, tinted with the surrounding text color at 80% opacity. The Waterloo mask selects only the shield from the official horizontal black logo; the source wordmark is retained in the file.
+Source assets are unmodified. NexaQuanta and Waterloo display their original colors at full opacity, with CSS selecting the mark beside the organization name. Waterloo uses the official color and color-reversed variants for light and dark themes. Calgary retains its monochrome mask treatment.
+
+- uwaterloo-color.png: https://uwaterloo.ca/brand/sites/ca.brand/files/universityofwaterloo_logo_horiz_rgb.png
+- uwaterloo-color-dark.png: https://uwaterloo.ca/brand/sites/ca.brand/files/universityofwaterloo_logo_horiz_rev_rgb.png
+
+Both color variants are linked from https://uwaterloo.ca/brand/uw-logos. Theme-specific blue and gold link text and translucent highlights complement the original logo colors while keeping text readable.
 
 - uwaterloo-mark.png: https://uwaterloo.ca/brand/sites/ca.brand/files/universityofwaterloo_logo_horiz_bk.png, linked from https://uwaterloo.ca/brand/uw-logos.
 

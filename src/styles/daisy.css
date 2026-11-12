@@ -48,6 +48,10 @@
   --scroll-thumb: #b5a58b;
   --ornament-gold: #b49355;
   --header-dot: #a8894d;
+  --brand-waterloo-ink: #765500;
+  --brand-waterloo-highlight: #fdd54f;
+  --brand-nexaquanta-ink: #175eb0;
+  --brand-nexaquanta-highlight: #1877f2;
   --grid-ink: #777264;
   --grid-opacity: 0.22;
   --grid-reading-opacity: 0.14;
@@ -101,6 +105,10 @@
   --scroll-thumb: #796c56;
   --ornament-gold: #bfa267;
   --header-dot: #bfa267;
+  --brand-waterloo-ink: #fdd54f;
+  --brand-waterloo-highlight: #fdd54f;
+  --brand-nexaquanta-ink: #8cbeff;
+  --brand-nexaquanta-highlight: #1877f2;
   --grid-ink: #d4cdbf;
   --grid-opacity: 0.16;
   --grid-reading-opacity: 0.1;

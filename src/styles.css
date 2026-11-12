@@ -424,15 +424,51 @@ h1:focus {
 }
 .organization-mark--waterloo {
   width: 0.866cap;
-  mask-image: url('/logos/uwaterloo-mark.png');
-  mask-size: 5.97cap 2.388cap;
-  mask-position: -0.821cap -0.687cap;
+  background-image: url('/logos/uwaterloo-color.png');
+  background-size: 5.97cap 2.388cap;
+  background-position: -0.821cap -0.687cap;
+}
+[data-theme='charcoal'] .organization-mark--waterloo {
+  background-image: url('/logos/uwaterloo-color-dark.png');
 }
 .organization-mark--nexaquanta {
   width: 1.5cap;
-  mask-image: url('/logos/nexaquanta-hires.png');
-  mask-size: 1.674cap 2.043cap;
-  mask-position: -0.0837cap -0.4517cap;
+  background-image: url('/logos/nexaquanta-hires.png');
+  background-size: 1.674cap 2.043cap;
+  background-position: -0.0837cap -0.4517cap;
+}
+.organization-mark--waterloo,
+.organization-mark--nexaquanta {
+  background-color: transparent;
+  background-repeat: no-repeat;
+  opacity: 1;
+}
+.organization-link--waterloo {
+  --brand-ink: var(--brand-waterloo-ink);
+  --brand-highlight: var(--brand-waterloo-highlight);
+}
+.organization-link--nexaquanta {
+  --brand-ink: var(--brand-nexaquanta-ink);
+  --brand-highlight: var(--brand-nexaquanta-highlight);
+}
+.d-link.organization-link {
+  color: var(--brand-ink);
+  background-color: color-mix(in srgb, var(--brand-highlight) 12%, transparent);
+  padding: 0.06em 0.18em;
+  border-radius: 0.12em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  text-decoration-color: color-mix(in srgb, var(--brand-ink) 45%, transparent);
+  transition:
+    background-color 180ms,
+    text-decoration-color 180ms;
+}
+.d-link.organization-link:hover {
+  background-color: color-mix(in srgb, var(--brand-highlight) 22%, transparent);
+  text-decoration-color: var(--brand-ink);
+}
+.d-link.organization-link:focus-visible {
+  outline-color: var(--brand-ink);
 }
 .intro-bio {
   max-width: 340px;
@@ -780,7 +816,9 @@ html[data-page-hidden='true'] .name > span {
   min-height: 36px;
   text-decoration: none;
 }
-.cs-webring a:hover { text-decoration: underline; }
+.cs-webring a:hover {
+  text-decoration: underline;
+}
 .cs-webring-mark span {
   width: 25px;
   height: 25px;

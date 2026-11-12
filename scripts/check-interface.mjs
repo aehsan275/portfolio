@@ -72,13 +72,16 @@ try {
               cap: parseFloat(getComputedStyle(el.parentElement).fontSize),
               opacity: style.opacity,
               mask: style.maskImage,
+              image: style.backgroundImage,
             };
           }),
         );
         assert.equal(marks.length, 3, 'all three institutions have decorative marks');
         assert(
-          marks.every((m) => m.opacity === '0.8' && m.mask !== 'none'),
-          'shared monochrome mask treatment',
+          marks
+            .slice(0, 2)
+            .every((m) => m.opacity === '1' && m.mask === 'none' && m.image !== 'none'),
+          'NexaQuanta and Waterloo retain their original color logos',
         );
         assert(
           Math.abs(marks[1].height - marks[2].height) < 0.1,
@@ -180,7 +183,10 @@ try {
       );
       assert.equal(await page.locator('.ascii-sky').getAttribute('aria-hidden'), 'true');
       if (path === '/') {
-        assert.equal(await page.locator('.intro-bio').innerText(), 'looking for summer 2027 internships.');
+        assert.equal(
+          await page.locator('.intro-bio').innerText(),
+          'looking for summer 2027 internships.',
+        );
         assert.equal(
           await page.locator('.project-entry').count(),
           0,

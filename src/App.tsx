@@ -152,7 +152,10 @@ function Home({ reduced, initialHome }: { reduced: boolean; initialHome: boolean
                 </h2>
                 <p className="study-line">
                   cs @{' '}
-                  <a className="d-link summary-link organization-name" href="/experience#education">
+                  <a
+                    className="d-link summary-link organization-name organization-link organization-link--waterloo"
+                    href="/experience#education"
+                  >
                     <OrganizationMark name="waterloo" />
                     uwaterloo.
                   </a>
@@ -165,7 +168,7 @@ function Home({ reduced, initialHome }: { reduced: boolean; initialHome: boolean
                 <p className="study-line">
                   swe @{' '}
                   <a
-                    className="d-link summary-link organization-name"
+                    className="d-link summary-link organization-name organization-link organization-link--nexaquanta"
                     href="/experience#experience"
                   >
                     <OrganizationMark name="nexaquanta" />
@@ -410,14 +413,17 @@ function PageContent({
       {path === '/experience' ? (
         <>
           <h1 data-reading tabIndex={-1}>
-            experience.
+            what i've done.
           </h1>
           <section className="reading-section" data-reading aria-labelledby="experience">
             <h2 id="experience" tabIndex={-1}>
               experience.
             </h2>
             <h3 className="organization-name">
-              <a className="d-link" href="https://nexaquanta.ai/">
+              <a
+                className="d-link organization-link organization-link--nexaquanta"
+                href="https://nexaquanta.ai/"
+              >
                 <OrganizationMark name="nexaquanta" />
                 {experience.company}
               </a>
@@ -440,7 +446,10 @@ function PageContent({
             <div className="education-entry">
               <div className="education-heading">
                 <h3 className="organization-name">
-                  <a className="d-link" href="https://uwaterloo.ca/">
+                  <a
+                    className="d-link organization-link organization-link--waterloo"
+                    href="https://uwaterloo.ca/"
+                  >
                     <OrganizationMark name="waterloo" />
                     {education.institution}
                   </a>
