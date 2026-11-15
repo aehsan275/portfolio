@@ -7,7 +7,8 @@ import { createServer } from 'vite';
 const vite = await createServer({ server: { middlewareMode: true }, appType: 'custom' });
 try {
   const { default: App } = await vite.ssrLoadModule('/src/App.tsx');
-  const { pagePaths, pageMetadata, siteUrl } = await vite.ssrLoadModule('/src/metadata.ts');
+  const { pagePaths, pageMetadata, pageStructuredData, siteUrl } =
+    await vite.ssrLoadModule('/src/metadata.ts');
   const template = await fs.readFile('dist/index.html', 'utf8');
   const escape = (value) =>
     value
@@ -25,13 +26,22 @@ try {
         /(<meta\s+name="description"\s+content=")[^"]*("\s*\/?>)/,
         `$1${escape(metadata.description)}$2`,
       )
-      .replace(/(<meta property="og:title" content=")[^"]*/, `$1${escape(metadata.title)}`)
+      .replace(/(<meta\s+property="og:title"\s+content=")[^"]*/, `$1${escape(metadata.title)}`)
       .replace(
-        /(<meta property="og:description" content=")[^"]*/,
+        /(<meta\s+property="og:description"\s+content=")[^"]*/,
         `$1${escape(metadata.description)}`,
       )
       .replace(/(<meta property="og:url" content=")[^"]*/, `$1${escape(metadata.url)}`)
-      .replace(/(<link rel="canonical" href=")[^"]*/, `$1${escape(metadata.url)}`);
+      .replace(/(<link rel="canonical" href=")[^"]*/, `$1${escape(metadata.url)}`)
+      .replace(
+        /(<script id="structured-data" type="application\/ld\+json">)[\s\S]*?(<\/script>)/,
+        (_, start, end) =>
+          `${start}${JSON.stringify(pageStructuredData(route)).replaceAll('<', '\\u003c')}${end}`,
+      )
+      .replace(
+        '</head>',
+        `${route === '/404' ? '<meta name="robots" content="noindex" />' : ''}</head>`,
+      );
     const output =
       route === '/'
         ? 'dist/index.html'

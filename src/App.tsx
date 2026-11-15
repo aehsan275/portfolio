@@ -3,7 +3,7 @@ import { education, experience, profile, projects, thoughts } from './data';
 import { DotBackground } from './components/DotBackground';
 import { FloralBorder } from './components/FloralBorder';
 import { useTheme } from './useTheme';
-import { pageMetadata } from './metadata';
+import { pageMetadata, pageStructuredData } from './metadata';
 import './styles/daisy.css';
 import './styles.css';
 
@@ -640,6 +640,8 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
       ?.setAttribute('content', metadata.description);
     document.querySelector('meta[property="og:url"]')?.setAttribute('content', metadata.url);
     document.querySelector('link[rel="canonical"]')?.setAttribute('href', metadata.url);
+    const structuredData = document.getElementById('structured-data');
+    if (structuredData) structuredData.textContent = JSON.stringify(pageStructuredData(route.path));
     let active = true;
     document.fonts.ready.then(() => {
       if (!active) return;

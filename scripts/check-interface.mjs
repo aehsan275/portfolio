@@ -377,7 +377,7 @@ try {
       '/thoughts/the-more-you-know-the-less-you-do': 'the more you know, the less you do',
       '/thoughts/who-are-we': 'who are we?',
     };
-    assert.equal(await page.title(), `${titles[path]} · abdullah ehsan`);
+    assert.equal(await page.title(), `${titles[path]} | Abdullah Ehsan`);
     assert.deepEqual(await page.locator('.site-header').boundingBox(), indexHeader);
     await page.reload();
     await ready();
