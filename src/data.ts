@@ -50,10 +50,10 @@ const scrabbleScreenshot = {
 export const projects = [
   {
     id: 'gpt2-rkt',
-    title: 'gpt-2 in racket',
+    title: 'gpt-2 in racket λ',
     preview: {
       image: '/projects/gpt2-rkt/recorded-run.png',
-      imageSize: { width: 712, height: 812 },
+      imageSize: { width: 712, height: 722 },
     },
     description: 'a gpt-2 small inference engine in pure racket',
     collaborator: { name: 'amaar', website: 'https://amaarsy.com/' },

@@ -46,7 +46,7 @@ try {
     );
     const projectLinks = page.locator('.project-entry h3 a');
     assert.deepEqual(await projectLinks.allTextContents(), [
-      'gpt-2 in racket',
+      'gpt-2 in racket λ',
       'mm kinetics',
       'scrabble solver',
     ]);
@@ -156,7 +156,7 @@ try {
   assert.equal(await kinetics.locator('.project-preview').count(), 0);
 
   for (const [name, image] of [
-    ['gpt-2 in racket', '/projects/gpt2-rkt/recorded-run.png'],
+    ['gpt-2 in racket λ', '/projects/gpt2-rkt/recorded-run.png'],
     ['scrabble solver', '/projects/scrabble/solver.jpg'],
   ]) {
     const project = page.getByRole('article', { name, exact: true });
