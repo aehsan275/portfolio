@@ -365,7 +365,26 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
                     {project.title}
                   </a>
                 </h3>
-                <p>{project.description}</p>
+                <p>
+                  {project.description}
+                  {'collaborator' in project && (
+                    <>
+                      , built with{' '}
+                      <a className="d-link" href={project.collaborator.website}>
+                        {project.collaborator.name}
+                      </a>
+                      {' ('}
+                      <a
+                        className="d-link"
+                        href={project.collaborator.github}
+                        aria-label={`${project.collaborator.name} on github`}
+                      >
+                        github ↗
+                      </a>
+                      ).
+                    </>
+                  )}
+                </p>
                 <div className="project-meta">
                   <p className="technologies">{project.tech.join(' / ')}</p>
                   {project.repository && (

@@ -45,7 +45,12 @@ export const projects = [
   {
     id: 'gpt2-rkt',
     title: 'gpt-2 in racket',
-    description: 'a gpt-2 small inference engine built with amaar in pure racket.',
+    description: 'a gpt-2 small inference engine in pure racket',
+    collaborator: {
+      name: 'amaar',
+      website: 'https://amaarsy.com/',
+      github: 'https://github.com/amaarsyed',
+    },
     tech: ['racket', 'transformers', 'futures'],
     note: '',
     repository: '',
