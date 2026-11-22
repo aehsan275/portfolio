@@ -240,8 +240,9 @@ export function DotBackground({
       const nextScale = window.devicePixelRatio || 1;
       const width = Math.round(bounds.width * nextScale);
       const height = Math.round(bounds.height * nextScale);
-      if (width !== canvas.width || height !== canvas.height) {
-        for (const layer of [canvas, cache]) {
+      // The visible canvas survives theme changes, while each effect creates a new cache.
+      for (const layer of [canvas, cache]) {
+        if (width !== layer.width || height !== layer.height) {
           layer.width = width;
           layer.height = height;
         }

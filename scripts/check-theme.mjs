@@ -21,9 +21,15 @@ export async function checkTheme(browser, base) {
     await page.evaluate(() => document.fonts.ready);
   };
   const raster = () =>
-    page
-      .locator('.ascii-sky')
-      .evaluate((el) => Array.from(el.getContext('2d').getImageData(0, 0, 8, 10).data));
+    page.locator('.ascii-sky').evaluate((canvas) => {
+      const width = 24;
+      const height = 30;
+      const pixels = canvas
+        .getContext('2d')
+        .getImageData(canvas.width - width, canvas.height - height, width, height);
+      return Array.from(pixels.data);
+    });
+  const hasDots = (pixels) => pixels.some((channel, index) => index % 4 === 3 && channel > 0);
   const geometry = () => page.locator('.home-composition').boundingBox();
   try {
     await fs.mkdir('.qa/theme', { recursive: true });
@@ -31,6 +37,7 @@ export async function checkTheme(browser, base) {
     await ready('charcoal');
     const originalGeometry = await geometry();
     const darkRaster = await raster();
+    assert(hasDots(darkRaster), 'dark theme paints dots near the bottom of the page');
     assert.equal(
       await page.locator('html').getAttribute('data-theme'),
       'charcoal',
@@ -64,6 +71,7 @@ export async function checkTheme(browser, base) {
     await page.emulateMedia({ colorScheme: 'light' });
     await ready('paper');
     const lightRaster = await raster();
+    assert(hasDots(lightRaster), 'switching to light keeps the lower dots visible');
     assert.notDeepEqual(lightRaster, darkRaster, 'canvas dots are recolored');
     assert.deepEqual(await geometry(), originalGeometry, 'theme preserves intro geometry');
     await page.getByRole('button', { name: 'Switch to dark mode', exact: true }).click();
