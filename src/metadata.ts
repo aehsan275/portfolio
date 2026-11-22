@@ -3,9 +3,6 @@ import { profile, projects, thoughts } from './data';
 export const siteUrl = 'https://abdullahehsan.vercel.app';
 export const pagePaths = [
   '/',
-  '/experience',
-  '/projects',
-  '/thoughts',
   ...projects.map((project) => `/projects/${project.id}`),
   ...thoughts.map((post) => `/thoughts/${post.id}`),
 ];
@@ -19,21 +16,6 @@ export function pageMetadata(path: string) {
       title: 'Abdullah Ehsan | Computer Science at University of Waterloo',
       description:
         'Abdullah Ehsan studies computer science at the University of Waterloo. Explore his software projects, work on AI agents and retrieval systems, and personal essays.',
-    },
-    '/experience': {
-      title: 'Experience & Education | Abdullah Ehsan',
-      description:
-        'Abdullah Ehsan’s software engineering internships at NexaQuanta, work on AI agents and RAG systems, and computer science studies at the University of Waterloo.',
-    },
-    '/projects': {
-      title: 'Software Projects | Abdullah Ehsan',
-      description:
-        'Software projects by Abdullah Ehsan: MM Kinetics for enzyme reaction modelling and uncertainty estimation, and a Scrabble solver that ranks legal moves.',
-    },
-    '/thoughts': {
-      title: 'Thoughts & Writing | Abdullah Ehsan',
-      description:
-        'Essays by Abdullah Ehsan on success, learning, and identity. Personal reflections from a University of Waterloo computer science student.',
     },
   };
   const page = detail
@@ -62,7 +44,7 @@ export function pageStructuredData(path: string) {
       ? []
       : [
           { '@type': 'ListItem', position: 1, name: profile.name, item: `${siteUrl}/` },
-          { '@type': 'ListItem', position: 2, name: section, item: `${siteUrl}/${section}` },
+          { '@type': 'ListItem', position: 2, name: section, item: `${siteUrl}/#${section}` },
           ...(path.split('/').length > 2
             ? [
                 {
@@ -103,12 +85,7 @@ export function pageStructuredData(path: string) {
         publisher: { '@id': personId },
       },
       {
-        '@type':
-          path === '/'
-            ? 'ProfilePage'
-            : ['/projects', '/thoughts'].includes(path)
-              ? 'CollectionPage'
-              : 'WebPage',
+        '@type': path === '/' ? 'ProfilePage' : 'WebPage',
         '@id': `${metadata.url}#webpage`,
         url: metadata.url,
         name: metadata.title,

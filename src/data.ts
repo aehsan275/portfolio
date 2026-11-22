@@ -3,11 +3,10 @@ export const profile = {
   affiliation: 'cs @ uwaterloo',
   introduction:
     'looking for summer 2027 internships.',
-  email: 'mailto:a2ehsan@uwaterloo.ca',
+  email: 'a2ehsan@uwaterloo.ca',
   github: 'https://github.com/aehsan275',
   linkedin: 'https://www.linkedin.com/in/abdullah-ehsan-960425399/',
   x: 'https://x.com/abdullahehsn',
-  calendar: 'https://cal.com/abdullah-ehsan/30min',
 };
 
 export const experience = {
@@ -36,7 +35,7 @@ export const education = {
   reflection: 'uni math is so different from high school.',
   priorCourse: {
     institution: 'university of calgary',
-    program: 'CPSC217',
+    program: 'CPSC217 dual credit',
     dates: 'summer 2025',
     reflection: 'took this purely for the love of the game, ended with 97%.',
   },
@@ -69,6 +68,7 @@ export const projects = [
             'i also implemented a simulation that tracks free enzyme, substrate, the enzyme-substrate complex, and product over time. that gave me a second way to examine the reaction alongside the rate equation.',
           ],
           image: '/projects/mmkinetics/figure-1.png',
+          imageSize: { width: 1240, height: 792 },
           imageAlt:
             'simulated concentrations over time: substrate declines slightly while product increases; free enzyme and the enzyme-substrate complex stay close to zero on this scale.',
           caption:
@@ -80,6 +80,7 @@ export const projects = [
             'the default run generates 100 enzymes and four substrates, producing 400 assays with ten concentration measurements each. i add noise to the simulated rates so that the fitting code works with imperfect observations. for one representative assay, i use scipy to estimate km and vmax from those measurements. the pipeline runs both an ordinary fit and a weighted fit that accounts for measurement uncertainty.',
           ],
           image: '/projects/mmkinetics/figure-2.png',
+          imageSize: { width: 1152, height: 792 },
           imageAlt:
             'synthetic reaction-rate measurements and a fitted michaelis-menten curve; the rate rises with substrate concentration and approaches a plateau.',
           caption:
@@ -89,6 +90,7 @@ export const projects = [
             'the resampled km estimates have a long upper tail, which makes the uncertainty visible even when the original curve looks convincing.',
           ],
           secondImage: '/projects/mmkinetics/figure-3.png',
+          secondImageSize: { width: 2142, height: 666 },
           secondImageAlt:
             'bootstrap distributions for km and vmax, and a scatter plot of both estimates; km has a long right tail.',
           secondCaption:
@@ -102,6 +104,7 @@ export const projects = [
             'i split the data by enzyme, keeping all assays from each enzyme together. the default split assigns 40 enzymes to training and 20 each to validation, calibration, and testing. i compare a median baseline, linear regression, ridge regression, random forest, and gradient boosting using validation rmse. gradient boosting wins this run. i then train 40 bootstrap copies of that model on resampled training assays and use their median prediction.',
           ],
           image: '/projects/mmkinetics/figure-4.png',
+          imageSize: { width: 1237, height: 792 },
           imageAlt:
             'validation error comparison for five models: gradient boosting has the lowest rmse, while the median baseline has the highest.',
           caption:
@@ -114,6 +117,7 @@ export const projects = [
             'i use the separate calibration set to construct prediction intervals. for each calibration enzyme, i take its largest absolute prediction error, then use the required ranked error to set the interval width. in the saved test set, the calibrated 95% intervals cover 96.25% of individual assay targets. they cover every assay within 95% of the test enzymes, or 19 out of 20.',
           ],
           image: '/projects/mmkinetics/figure-5.png',
+          imageSize: { width: 1243, height: 792 },
           imageAlt:
             'predictions and synthetic targets across 80 test assays, with a shaded 95 percent prediction interval around each prediction.',
           caption:
@@ -145,6 +149,7 @@ export const projects = [
   },
   {
     id: 'scrabble-solver',
+    previewSection: 'the project',
     details: [] as readonly string[],
     writeup: {
       subtitle: '',
@@ -158,6 +163,7 @@ export const projects = [
             "while looking on google, i found andrew appel and guy jacobson's 1988 paper, the world's fastest scrabble program, and decided to try building a solver using its approach. i expected the paper to be difficult to read, so i was surprised by how much i understood. it introduced me to tries and recursive backtracking.",
           ],
           image: '/projects/scrabble/solver.jpg',
+          imageSize: { width: 1128, height: 954 },
           imageAlt:
             'the scrabble solver interface with a populated board, rack RIF?AA?, and five suggested moves headed by SAFARIS for 94 points.',
           imageKind: 'screenshot',

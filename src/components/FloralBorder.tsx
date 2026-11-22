@@ -4,7 +4,11 @@ function CornerOrnament() {
       <path d="M0 42V9H50" stroke="var(--ornament-gold)" strokeWidth="0.8" />
       <g className="banner-knot" transform="translate(25 26)">
         <rect x="-12" y="-12" width="24" height="24" fill="var(--color-base-100)" />
-        <path d="M-7-7H7V7H-7ZM0-10 10 0 0 10-10 0Z" stroke="var(--motif-0)" strokeWidth="0.85" />
+        <path
+          d="M-7-7H7V7H-7ZM0-10 10 0 0 10-10 0Z"
+          stroke="var(--ornament-accent)"
+          strokeWidth="0.85"
+        />
         <path d="M0-4 4 0 0 4-4 0Z" stroke="var(--ornament-gold)" strokeWidth="0.75" />
       </g>
       <path

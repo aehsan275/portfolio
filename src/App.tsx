@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState, type MouseEvent } from 'react';
+import { Fragment, useEffect, useRef, useState, type MouseEvent, type PointerEvent } from 'react';
 import { education, experience, profile, projects, thoughts } from './data';
 import { DotBackground } from './components/DotBackground';
 import { FloralBorder } from './components/FloralBorder';
@@ -41,12 +41,58 @@ function Name({ reduced, initialHome }: { reduced: boolean; initialHome: boolean
 }
 
 function ContactLinks() {
+  const [copyStatus, setCopyStatus] = useState<'copied' | 'failed' | null>(null);
+  const displayEmail = profile.email.replace('@', ' [at] ').replaceAll('.', ' [dot] ');
+
+  useEffect(() => {
+    if (copyStatus !== 'copied') return;
+    const timeout = window.setTimeout(() => setCopyStatus(null), 2000);
+    return () => window.clearTimeout(timeout);
+  }, [copyStatus]);
+
+  async function copyEmail() {
+    setCopyStatus(null);
+    try {
+      await navigator.clipboard.writeText(profile.email);
+      setCopyStatus('copied');
+    } catch {
+      setCopyStatus('failed');
+    }
+  }
+
   return (
     <nav className="contact-links" aria-label="Contact">
-      <span className="contact-email">
-        <a className="d-link" href={profile.email}>
-          {profile.email.slice('mailto:'.length).replace('@', ' [at] ').replaceAll('.', ' [dot] ')}
-        </a>
+      <span className="contact-email" data-copy-status={copyStatus ?? undefined}>
+        <button
+          className="d-btn d-btn-link d-link contact-email-button"
+          type="button"
+          aria-label={`Copy email address: ${displayEmail}`}
+          title="Copy email address"
+          onClick={copyEmail}
+        >
+          {displayEmail}
+        </button>
+        <span className="contact-copy-status" role="status">
+          {copyStatus === 'copied' && (
+            <>
+              <svg
+                viewBox="0 0 16 16"
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m3.5 8 3 3 6-6" />
+              </svg>
+              <span>email copied</span>
+            </>
+          )}
+          {copyStatus === 'failed' && `couldn’t copy automatically. email: ${profile.email}`}
+        </span>
       </span>
       <a className="d-link" href={profile.github}>
         github
@@ -56,9 +102,6 @@ function ContactLinks() {
       </a>
       <a className="d-link" href={profile.x}>
         x
-      </a>
-      <a className="d-link" href={profile.calendar}>
-        cal
       </a>
     </nav>
   );
@@ -90,9 +133,8 @@ function BackToTop({ pageKey, reduced }: { pageKey: string; reduced: boolean }) 
     const measure = () => {
       frame = 0;
       if (!active) return;
-      // Exclude the control's own space so it cannot create its own scrollbar.
-      const controlHeight = slot.current?.offsetHeight ?? 0;
       const root = document.documentElement;
+      const controlHeight = slot.current?.offsetHeight ?? 0;
       setScrollable(root.scrollHeight - controlHeight > root.clientHeight + 1);
     };
     const schedule = () => {
@@ -118,7 +160,7 @@ function BackToTop({ pageKey, reduced }: { pageKey: string; reduced: boolean }) 
   return (
     <div ref={slot} className="back-to-top-slot" hidden={!scrollable}>
       <button
-        className="d-btn d-btn-link back-to-top"
+        className="d-btn d-btn-link d-link back-to-top"
         type="button"
         onClick={() => {
           window.scrollTo({ top: 0, behavior: reduced ? 'instant' : 'smooth' });
@@ -135,87 +177,252 @@ function OrganizationMark({ name }: { name: 'waterloo' | 'nexaquanta' | 'ucalgar
   return <span className={`organization-mark organization-mark--${name}`} aria-hidden="true" />;
 }
 
-function Home({ reduced, initialHome }: { reduced: boolean; initialHome: boolean }) {
+function positionProjectPreview(title: HTMLAnchorElement, x: number, y: number) {
+  const preview = title.closest('.project-entry')?.querySelector<HTMLElement>('.project-preview');
+  if (!preview) return;
+
+  const gap = 12;
+  const { offsetWidth: width, offsetHeight: height } = preview;
+  const left = Math.max(
+    gap,
+    Math.min(x - width / 2, document.documentElement.clientWidth - width - gap),
+  );
+  const above = y - height - gap;
+  const top = above >= gap ? above : Math.min(y + gap, innerHeight - height - gap);
+  preview.style.setProperty('--preview-x', `${left}px`);
+  preview.style.setProperty('--preview-y', `${Math.max(gap, top)}px`);
+}
+
+function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialHome: boolean }) {
+  const [previewDismissed, setPreviewDismissed] = useState(false);
+
+  useEffect(() => {
+    const dismissPreview = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setPreviewDismissed(true);
+    };
+    window.addEventListener('keydown', dismissPreview);
+    return () => window.removeEventListener('keydown', dismissPreview);
+  }, []);
+
   return (
-    <>
-      <main id="main" tabIndex={-1}>
-        <div className="home">
-          <div className="home-composition">
-            <section className="intro" data-reading aria-label="About Abdullah">
-              <Name reduced={reduced} initialHome={initialHome} />
-              <p className="intro-affiliation">{profile.name}</p>
-              <p className="intro-bio">{profile.introduction}</p>
-            </section>
-            <div className="summary" data-reading>
-              <section className="summary-group" aria-labelledby="studying">
-                <h2 className="group-label" id="studying">
-                  studying
-                </h2>
-                <p className="study-line">
-                  cs @{' '}
-                  <a
-                    className="d-link summary-link organization-name organization-link organization-link--waterloo"
-                    href="/experience#education"
-                  >
-                    <OrganizationMark name="waterloo" />
-                    uwaterloo
-                  </a>
-                </p>
-              </section>
-              <section className="summary-group" aria-labelledby="building">
-                <h2 className="group-label" id="building">
-                  previously
-                </h2>
-                <p className="study-line">
-                  swe @{' '}
-                  <a
-                    className="d-link summary-link organization-name organization-link organization-link--nexaquanta"
-                    href="/experience#experience"
-                  >
-                    <OrganizationMark name="nexaquanta" />
-                    nexaquanta
-                  </a>
-                </p>
-                <p className="summary-copy">worked on agents and rag systems.</p>
-              </section>
-              <section className="summary-group" aria-labelledby="overview-projects">
-                <h2 className="group-label" id="overview-projects">
-                  projects
-                </h2>
-                <ul className="home-projects">
-                  {projects.slice(0, 2).map((project) => (
-                    <li key={project.id}>
-                      <a className="d-link summary-link" href={`/projects/${project.id}`}>
-                        {project.title}
-                      </a>
-                      <span>{project.summary}</span>
-                    </li>
-                  ))}
-                </ul>
-                <a className="d-link more-projects" href="/projects">
-                  more projects
+    <main id="main" tabIndex={-1}>
+      <div className="home">
+        <div className="home-composition">
+          <section className="intro" data-reading aria-label="About Abdullah">
+            <Name reduced={reduced} initialHome={initialHome} />
+            <p className="intro-affiliation">{profile.name}</p>
+            <p className="intro-bio">{profile.introduction}</p>
+          </section>
+          <div className="summary" data-reading>
+            <section className="summary-group" aria-labelledby="studying">
+              <h2 className="group-label" id="studying">
+                studying
+              </h2>
+              <p className="study-line">
+                cs @{' '}
+                <a
+                  className="d-link summary-link organization-name marker-link marker-link--waterloo"
+                  href="#education"
+                >
+                  <OrganizationMark name="waterloo" />
+                  uwaterloo
                 </a>
-              </section>
-            </div>
+              </p>
+            </section>
+            <section className="summary-group" aria-labelledby="building">
+              <h2 className="group-label" id="building">
+                previously
+              </h2>
+              <p className="study-line">
+                swe @{' '}
+                <a
+                  className="d-link summary-link organization-name marker-link marker-link--nexaquanta"
+                  href="#experience"
+                >
+                  <OrganizationMark name="nexaquanta" />
+                  nexaquanta
+                </a>
+              </p>
+            </section>
+            <a className="d-link projects-link" href="#projects">
+              <span>view projects</span>
+              <svg
+                viewBox="0 0 16 16"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.25"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M8 3.5v8.75m-3.25-3.3L8 12.25l3.25-3.3" />
+              </svg>
+            </a>
+          </div>
+          <div className="intro-links" id="links" data-reading tabIndex={-1}>
+            <ContactLinks />
           </div>
         </div>
-      </main>
-    </>
+      </div>
+      <div className="portfolio-details">
+        <section className="reading-section page-section" data-reading aria-labelledby="experience">
+          <h2 id="experience" tabIndex={-1}>
+            experience.
+          </h2>
+          <h3 className="organization-name">
+            <a className="d-link marker-link marker-link--nexaquanta" href="https://nexaquanta.ai/">
+              <OrganizationMark name="nexaquanta" />
+              {experience.company}
+            </a>
+          </h3>
+          <p>{experience.summary}</p>
+          <dl className="experience-roles">
+            {experience.roles.map((role) => (
+              <div key={role.dates}>
+                <dt className="entry-title">{role.title}</dt>
+                <dd className="role-dates">{role.dates}</dd>
+                <dd className="role-description">{role.description}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+        <section className="reading-section page-section" data-reading aria-labelledby="education">
+          <h2 className="section-label" id="education" tabIndex={-1}>
+            education.
+          </h2>
+          <div className="education-entry">
+            <div className="education-heading">
+              <h3 className="organization-name">
+                <a
+                  className="d-link marker-link marker-link--waterloo"
+                  href="https://uwaterloo.ca/"
+                >
+                  <OrganizationMark name="waterloo" />
+                  {education.institution}
+                </a>
+              </h3>
+              <span>{education.dates}</span>
+            </div>
+            <p className="entry-title">{education.program}</p>
+            <p>{education.reflection}</p>
+          </div>
+          <div className="education-entry">
+            <div className="education-heading">
+              <h3 className="organization-name">
+                <a
+                  className="d-link marker-link marker-link--ucalgary"
+                  href="https://www.ucalgary.ca/"
+                >
+                  <OrganizationMark name="ucalgary" />
+                  {education.priorCourse.institution}
+                </a>
+              </h3>
+              <span>{education.priorCourse.dates}</span>
+            </div>
+            <p className="entry-title">{education.priorCourse.program}</p>
+            <p>{education.priorCourse.reflection}</p>
+          </div>
+        </section>
+        <section className="reading-section page-section" aria-labelledby="projects">
+          <h2 id="projects" data-reading tabIndex={-1}>
+            projects.
+          </h2>
+          {projects.map((project) => {
+            const previewSection: WriteupSection | undefined =
+              'previewSection' in project
+                ? project.writeup.sections.find(
+                    (section) => section.title === project.previewSection,
+                  )
+                : undefined;
+            return (
+              <article
+                className="project-entry"
+                data-reading
+                key={project.id}
+                aria-labelledby={`project-${project.id}`}
+              >
+                <h3 id={`project-${project.id}`} tabIndex={-1}>
+                  <a
+                    className="d-link project-title"
+                    href={`/projects/${project.id}`}
+                    data-preview-dismissed={
+                      previewSection?.image && previewDismissed ? '' : undefined
+                    }
+                    onPointerEnter={(event: PointerEvent<HTMLAnchorElement>) => {
+                      if (!previewSection?.image || event.pointerType !== 'mouse') return;
+                      setPreviewDismissed(false);
+                      positionProjectPreview(event.currentTarget, event.clientX, event.clientY);
+                    }}
+                    onFocus={(event) => {
+                      const title = event.currentTarget;
+                      if (!previewSection?.image || !title.matches(':focus-visible')) return;
+                      setPreviewDismissed(false);
+                      const { left, width, top, height } = title.getBoundingClientRect();
+                      positionProjectPreview(title, left + width / 2, top + height / 2);
+                    }}
+                  >
+                    {project.title}
+                  </a>
+                </h3>
+                <p>{project.description}</p>
+                <div className="project-meta">
+                  <p className="technologies">{project.tech.join(' / ')}</p>
+                  {project.repository && (
+                    <a
+                      className="d-link project-source"
+                      href={project.repository}
+                      aria-label={`${project.title} on github`}
+                    >
+                      github ↗
+                    </a>
+                  )}
+                </div>
+                {project.note && <p className="project-note">{project.note}</p>}
+                {previewSection?.image && (
+                  <figure className="project-preview" aria-hidden="true">
+                    <img
+                      src={previewSection.image}
+                      {...previewSection.imageSize}
+                      className={
+                        previewSection.imageKind === 'screenshot' ? 'writeup-screenshot' : undefined
+                      }
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </figure>
+                )}
+              </article>
+            );
+          })}
+        </section>
+        <section className="reading-section page-section" aria-labelledby="thoughts">
+          <h2 id="thoughts" data-reading tabIndex={-1}>
+            thoughts.
+          </h2>
+          {thoughts.map((post) => (
+            <article className="thought-entry" data-reading key={post.id} aria-labelledby={post.id}>
+              <h3 id={post.id} tabIndex={-1}>
+                <a className="d-link thought-title" href={`/thoughts/${post.id}`}>
+                  {post.title}
+                </a>
+              </h3>
+              <p className="thought-summary">{post.summary}</p>
+            </article>
+          ))}
+        </section>
+      </div>
+    </main>
   );
 }
 
-const PAGES = [
-  { path: '/', label: 'about' },
-  { path: '/experience', label: 'experience' },
-  { path: '/projects', label: 'projects' },
-  { path: '/thoughts', label: 'thoughts' },
-];
-
 function getDetail(path: string) {
   const project = projects.find((item) => path === '/projects/' + item.id);
-  if (project) return { ...project, parent: '/projects', parentLabel: 'projects' };
+  if (project) return { ...project, parentLabel: 'projects' };
   const post = thoughts.find((item) => path === '/thoughts/' + item.id);
-  if (post) return { ...post, parent: '/thoughts', parentLabel: 'thoughts' };
+  if (post) return { ...post, parentLabel: 'thoughts' };
   return null;
 }
 
@@ -226,11 +433,13 @@ type WriteupSection = {
   paragraphs: readonly string[];
   equations?: readonly { expression: string; note: string; afterParagraph?: number }[];
   image?: string;
+  imageSize?: { width: number; height: number };
   imageAlt?: string;
   imageKind?: string;
   caption?: string;
   afterImage?: readonly string[];
   secondImage?: string;
+  secondImageSize?: { width: number; height: number };
   secondImageAlt?: string;
   secondCaption?: string;
 };
@@ -307,7 +516,9 @@ function ProjectWriteup({
               >
                 <img
                   src={section.image}
+                  {...section.imageSize}
                   alt={section.imageAlt ?? ''}
+                  loading="lazy"
                   className={section.imageKind === 'screenshot' ? 'writeup-screenshot' : undefined}
                 />
               </button>
@@ -325,7 +536,12 @@ function ProjectWriteup({
                 aria-label="enlarge bootstrap distributions and parameter correlation chart"
                 onClick={() => openImage(section.secondImage!, section.secondImageAlt ?? '')}
               >
-                <img src={section.secondImage} alt={section.secondImageAlt ?? ''} />
+                <img
+                  src={section.secondImage}
+                  {...section.secondImageSize}
+                  alt={section.secondImageAlt ?? ''}
+                  loading="lazy"
+                />
               </button>
               {section.secondCaption && <figcaption>{section.secondCaption}</figcaption>}
             </figure>
@@ -363,6 +579,83 @@ function ProjectWriteup({
   );
 }
 
+function DetailPage({ detail }: { detail: NonNullable<ReturnType<typeof getDetail>> }) {
+  const topBack = useRef<HTMLAnchorElement>(null);
+  const content = useRef<HTMLDivElement>(null);
+  const [showBottomBack, setShowBottomBack] = useState(false);
+  const backHref = `/#${detail.parentLabel}`;
+
+  useEffect(() => {
+    const top = topBack.current;
+    const body = content.current;
+    const main = top?.parentElement;
+    if (!top || !body || !main) return;
+
+    const viewport = window.visualViewport;
+    const measure = () => {
+      const viewportHeight = viewport?.height ?? document.documentElement.clientHeight;
+      // Keep at least one viewport between the links.
+      const readingDistance =
+        body.getBoundingClientRect().bottom - top.getBoundingClientRect().bottom;
+      setShowBottomBack(readingDistance >= viewportHeight);
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(main);
+    window.addEventListener('resize', measure);
+    viewport?.addEventListener('resize', measure);
+    measure();
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', measure);
+      viewport?.removeEventListener('resize', measure);
+    };
+  }, []);
+
+  return (
+    <main id="main" className="inner-page portfolio-details detail-entry" tabIndex={-1}>
+      <a ref={topBack} className="d-link detail-back" href={backHref}>
+        back
+      </a>
+      <div className="detail-title" data-reading>
+        <h1 tabIndex={-1}>{detail.title}</h1>
+        {'repository' in detail && detail.repository && (
+          <a
+            className="d-link project-source"
+            href={detail.repository}
+            aria-label={`${detail.title} on github`}
+          >
+            github ↗
+          </a>
+        )}
+      </div>
+      <div ref={content} className="detail-content" data-reading>
+        {'writeup' in detail && detail.writeup ? (
+          <ProjectWriteup {...detail.writeup} />
+        ) : (
+          detail.details.map((paragraph, index) =>
+            paragraph.startsWith('### ') ? (
+              <h2 key={index}>{paragraph.slice(4)}</h2>
+            ) : (
+              <p key={index}>
+                {paragraph.startsWith('**') && paragraph.endsWith('**') ? (
+                  <strong>{paragraph.slice(2, -2)}</strong>
+                ) : (
+                  paragraph
+                )}
+              </p>
+            ),
+          )
+        )}
+      </div>
+      {showBottomBack && (
+        <a className="d-link detail-back detail-back--end" href={backHref}>
+          back
+        </a>
+      )}
+    </main>
+  );
+}
+
 function PageContent({
   path,
   reduced,
@@ -372,178 +665,16 @@ function PageContent({
   reduced: boolean;
   initialHome: boolean;
 }) {
-  if (path === '/') return <Home reduced={reduced} initialHome={initialHome} />;
+  if (path === '/') return <PortfolioContent reduced={reduced} initialHome={initialHome} />;
   const detail = getDetail(path);
-  if (detail)
-    return (
-      <main id="main" className="inner-page portfolio-details detail-entry" tabIndex={-1}>
-        <a className="d-link detail-back" href={detail.parent}>
-          ← back to {detail.parentLabel}
-        </a>
-        <h1 data-reading tabIndex={-1}>
-          {detail.title}
-          {'repository' in detail && detail.repository && (
-            <a className="d-link detail-source" href={detail.repository}>
-              github ↗
-            </a>
-          )}
-        </h1>
-        <div className="detail-content" data-reading>
-          {'writeup' in detail && detail.writeup ? (
-            <ProjectWriteup {...detail.writeup} />
-          ) : (
-            detail.details.map((paragraph, index) =>
-              paragraph.startsWith('### ') ? (
-                <h2 key={index}>{paragraph.slice(4)}</h2>
-              ) : (
-                <p key={index}>
-                  {paragraph.startsWith('**') && paragraph.endsWith('**') ? (
-                    <strong>{paragraph.slice(2, -2)}</strong>
-                  ) : (
-                    paragraph
-                  )}
-                </p>
-              ),
-            )
-          )}
-        </div>
-      </main>
-    );
+  if (detail) return <DetailPage key={path} detail={detail} />;
   return (
-    <main id="main" className="inner-page portfolio-details" tabIndex={-1}>
-      {path === '/experience' ? (
-        <>
-          <h1 data-reading tabIndex={-1}>
-            what i've done.
-          </h1>
-          <section className="reading-section" data-reading aria-labelledby="experience">
-            <h2 id="experience" tabIndex={-1}>
-              experience.
-            </h2>
-            <h3 className="organization-name">
-              <a
-                className="d-link organization-link organization-link--nexaquanta"
-                href="https://nexaquanta.ai/"
-              >
-                <OrganizationMark name="nexaquanta" />
-                {experience.company}
-              </a>
-            </h3>
-            <p>{experience.summary}</p>
-            <dl className="experience-roles">
-              {experience.roles.map((role) => (
-                <div key={role.dates}>
-                  <dt className="entry-title">{role.title}</dt>
-                  <dd className="role-dates">{role.dates}</dd>
-                  <dd className="role-description">{role.description}</dd>
-                </div>
-              ))}
-            </dl>
-          </section>
-          <section className="reading-section" data-reading aria-labelledby="education">
-            <h2 className="section-label" id="education" tabIndex={-1}>
-              education.
-            </h2>
-            <div className="education-entry">
-              <div className="education-heading">
-                <h3 className="organization-name">
-                  <a
-                    className="d-link organization-link organization-link--waterloo"
-                    href="https://uwaterloo.ca/"
-                  >
-                    <OrganizationMark name="waterloo" />
-                    {education.institution}
-                  </a>
-                </h3>
-                <span>{education.dates}</span>
-              </div>
-              <p className="entry-title">{education.program}</p>
-              <p>{education.reflection}</p>
-            </div>
-            <div className="education-entry">
-              <div className="education-heading">
-                <h3 className="organization-name">
-                  <a
-                    className="d-link organization-link organization-link--ucalgary"
-                    href="https://www.ucalgary.ca/"
-                  >
-                    <OrganizationMark name="ucalgary" />
-                    {education.priorCourse.institution}
-                  </a>
-                </h3>
-                <span>{education.priorCourse.dates}</span>
-              </div>
-              <p className="entry-title">{education.priorCourse.program}</p>
-              <p>{education.priorCourse.reflection}</p>
-            </div>
-          </section>
-        </>
-      ) : path === '/projects' ? (
-        <>
-          <section className="projects-section" aria-labelledby="projects">
-            <h1 id="projects" data-reading tabIndex={-1}>
-              things i’ve built.
-            </h1>
-            {projects.map((project) => (
-              <article
-                className="reading-section project-entry"
-                data-reading
-                key={project.id}
-                aria-labelledby={`project-${project.id}`}
-              >
-                <h2 id={`project-${project.id}`} tabIndex={-1}>
-                  <a className="d-link" href={`/projects/${project.id}`}>
-                    {project.title}
-                  </a>
-                </h2>
-                <p>{project.description}</p>
-                <p className="technologies">{project.tech.join(' / ')}</p>
-                {project.repository && (
-                  <a
-                    className="d-link project-source"
-                    href={project.repository}
-                    aria-label={`${project.title} on github`}
-                  >
-                    github ↗
-                  </a>
-                )}
-                {project.note && <p className="project-note">{project.note}</p>}
-              </article>
-            ))}
-          </section>
-        </>
-      ) : path === '/thoughts' ? (
-        <>
-          <h1 data-reading tabIndex={-1}>
-            thoughts.
-          </h1>
-          {thoughts.map((post) => (
-            <article
-              className="reading-section thought-entry"
-              data-reading
-              key={post.id}
-              aria-labelledby={post.id}
-            >
-              <h2 id={post.id} tabIndex={-1}>
-                <a className="d-link" href={`/thoughts/${post.id}`}>
-                  {post.title}
-                </a>
-              </h2>
-              <p>{post.summary}</p>
-            </article>
-          ))}
-        </>
-      ) : (
-        <>
-          <h1 data-reading tabIndex={-1}>
-            page not found.
-          </h1>
-          <p>there isn’t a page at this address.</p>
-          <a className="d-link" href="/">
-            return to the homepage
-          </a>
-        </>
-      )}
+    <main id="main" className="inner-page portfolio-details" tabIndex={-1} data-reading>
+      <h1 tabIndex={-1}>page not found.</h1>
+      <p>there isn’t a page at this address.</p>
+      <a className="d-link" href="/">
+        return to the homepage
+      </a>
     </main>
   );
 }
@@ -576,9 +707,7 @@ function readLocation(): Location {
   if ((path === '/' || path === '/projects' || path === '/thoughts') && oldFragments[url.hash])
     destination = oldFragments[url.hash];
   if (path === '/') {
-    if (['#experience', '#education'].includes(url.hash)) destination = '/experience' + url.hash;
-    else if (url.hash === '#projects') destination = '/projects';
-    else if (projects.some((p) => url.hash === '#project-' + p.id))
+    if (projects.some((p) => url.hash === '#project-' + p.id))
       destination = '/projects/' + url.hash.slice('#project-'.length);
     else if (['#project-raytracer', '#project-http', '#project-rag'].includes(url.hash))
       destination = '/projects';
@@ -591,6 +720,15 @@ function readLocation(): Location {
     const target = new URL(destination, url);
     path = target.pathname;
     url.hash = target.hash;
+  }
+  const indexFragments: Record<string, string> = {
+    '/experience': '#experience',
+    '/projects': '#projects',
+    '/thoughts': '#thoughts',
+  };
+  if (indexFragments[path]) {
+    url.hash ||= indexFragments[path];
+    path = '/';
   }
   url.pathname = path;
   const canonical = path + url.search + url.hash;
@@ -705,61 +843,36 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
       <DotBackground reduced={reduced} pageKey={route.path} theme={theme} />
       <FloralBorder />
       <div className="site-shell">
-        <header className="site-header" data-reading>
-          <nav className="page-navigation" aria-label="main navigation">
-            {PAGES.map((page) => (
-              <a
-                key={page.path}
-                className="d-link"
-                href={page.path}
-                aria-current={
-                  route.path === page.path
-                    ? 'page'
-                    : getDetail(route.path)?.parent === page.path
-                      ? 'location'
-                      : undefined
-                }
-              >
-                {page.label}
-              </a>
-            ))}
-          </nav>
-          <div className="theme-control">
-            <button
-              className="d-btn d-btn-link theme-toggle"
-              type="button"
-              aria-label={theme === 'paper' ? 'Switch to dark mode' : 'Switch to light mode'}
-              title={theme === 'paper' ? 'Switch to dark mode' : 'Switch to light mode'}
-              aria-pressed={theme === 'charcoal'}
-              onClick={() => chooseTheme(theme === 'paper' ? 'charcoal' : 'paper')}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.35"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                {theme === 'paper' ? (
-                  <>
-                    <path d="M19.8 14.5A8.2 8.2 0 0 1 9.5 4.2a8.3 8.3 0 1 0 10.3 10.3Z" />
-                    <path
-                      d="m17.5 3 .5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5-1.5-.5 1.5-.5Z"
-                      strokeWidth="1"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <circle cx="12" cy="12" r="4" />
-                    <path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42m0-14.14-1.42 1.42m-11.3 11.3-1.42 1.42" />
-                  </>
-                )}
-              </svg>
-            </button>
-          </div>
-        </header>
+        <button
+          className="d-btn d-btn-link theme-toggle"
+          type="button"
+          aria-label={theme === 'paper' ? 'Switch to dark mode' : 'Switch to light mode'}
+          title={theme === 'paper' ? 'Switch to dark mode' : 'Switch to light mode'}
+          aria-pressed={theme === 'charcoal'}
+          onClick={() => chooseTheme(theme === 'paper' ? 'charcoal' : 'paper')}
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.35"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            {theme === 'paper' ? (
+              <>
+                <path d="M19.8 14.5A8.2 8.2 0 0 1 9.5 4.2a8.3 8.3 0 1 0 10.3 10.3Z" />
+                <path d="m17.5 3 .5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5-1.5-.5 1.5-.5Z" strokeWidth="1" />
+              </>
+            ) : (
+              <>
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42m0-14.14-1.42 1.42m-11.3 11.3-1.42 1.42" />
+              </>
+            )}
+          </svg>
+        </button>
         <PageContent path={route.path} reduced={reduced} initialHome={initialHome.current} />
         <footer className="site-footer" data-reading>
           <p className="footer-name">abdullah ehsan</p>

@@ -20,5 +20,10 @@
       "destination": "/thoughts/why-success-feels-average",
       "permanent": true
     }
+  ],
+  "rewrites": [
+    { "source": "/experience", "destination": "/" },
+    { "source": "/projects", "destination": "/" },
+    { "source": "/thoughts", "destination": "/" }
   ]
 }

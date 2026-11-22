@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#faf7ef" />
+    <meta name="theme-color" content="#f8f7f4" />
     <script>
       (() => {
         let theme;
@@ -15,7 +15,7 @@
         }
         document.documentElement.dataset.theme = theme;
         document.querySelector('meta[name="theme-color"]').content =
-          theme === 'charcoal' ? '#211f1b' : '#faf7ef';
+          theme === 'charcoal' ? '#20201f' : '#f8f7f4';
       })();
     </script>
     <meta
@@ -42,8 +42,14 @@
     </script>
     <title>Abdullah Ehsan | Computer Science at University of Waterloo</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preload" href="/fonts/manrope.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/literata.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link
+      rel="preload"
+      href="/fonts/geist-mono-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
   </head>
   <body>
     <div id="root"></div>

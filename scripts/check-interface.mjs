@@ -12,18 +12,6 @@ const errors = [];
 page.on('pageerror', (error) => errors.push(error.message));
 await fs.mkdir('.qa/pages', { recursive: true });
 await fs.mkdir('.qa/dots', { recursive: true });
-const routes = [
-  ['/', 'about'],
-  ['/experience', 'experience'],
-  ['/projects', 'projects'],
-  ['/thoughts', 'thoughts'],
-  ['/projects/mm-kinetics', 'projects'],
-  ['/projects/scrabble-solver', 'projects'],
-  ['/thoughts/why-success-feels-average', 'thoughts'],
-  ['/thoughts/the-more-you-know-the-less-you-do', 'thoughts'],
-  ['/thoughts/who-are-we', 'thoughts'],
-];
-const nav = () => page.getByRole('navigation', { name: 'main navigation' });
 const ready = async () => {
   await page.locator('main').waitFor();
   await page.evaluate(() => document.fonts.ready);
@@ -37,400 +25,241 @@ try {
     [320, 760],
   ]) {
     await page.setViewportSize({ width, height });
-    let sharedHeader;
-    for (const [path, label] of routes) {
-      await page.goto(base + path);
-      await ready();
-      assert(
-        await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
-        `${path}/${width}: no horizontal overflow`,
-      );
-      assert.equal(await page.locator('main').count(), 1);
-      assert.equal(await page.locator('h1').count(), 1);
-      await page.waitForFunction(() => {
-        const slot = document.querySelector('.back-to-top-slot');
-        const root = document.documentElement;
-        const needsScroll = root.scrollHeight - slot.offsetHeight > root.clientHeight + 1;
-        return !slot.hidden === needsScroll;
-      });
-      if (path === '/experience') {
-        assert.equal(await page.locator('.education-entry').count(), 2);
-        assert.equal(await page.locator('.role-description').count(), 2);
-        await page.getByText('CPSC217', { exact: true }).waitFor();
-        await page
-          .getByText('took this purely for the love of the game, ended with 97%.', { exact: true })
-          .waitFor();
-        await page
-          .getByText('uni math is so different from high school.', { exact: true })
-          .waitFor();
-        const marks = await page.locator('.organization-mark').evaluateAll((nodes) =>
-          nodes.map((el) => {
-            const r = el.getBoundingClientRect();
-            const style = getComputedStyle(el);
-            return {
-              height: r.height,
-              cap: parseFloat(getComputedStyle(el.parentElement).fontSize),
-              opacity: style.opacity,
-              mask: style.maskImage,
-              image: style.backgroundImage,
-            };
-          }),
-        );
-        assert.equal(marks.length, 3, 'all three institutions have decorative marks');
-        assert(
-          marks.every((m) => m.opacity === '1' && m.mask === 'none' && m.image !== 'none'),
-          'all three organizations retain their original color logos',
-        );
-        assert(
-          Math.abs(marks[1].height - marks[2].height) < 0.1,
-          'university marks share the same cap height',
-        );
-        await page.getByText('2026–2031', { exact: true }).waitFor();
-        assert.equal(
-          await page
-            .getByText('university course taken while in high school.', { exact: true })
-            .count(),
-          0,
-        );
-        const weights = await page.locator('.entry-title, .role-description').evaluateAll((nodes) =>
-          nodes.map((el) => ({
-            title: el.classList.contains('entry-title'),
-            weight: Number(getComputedStyle(el).fontWeight),
-          })),
-        );
-        assert(
-          weights.every((item) => (item.title ? item.weight === 600 : item.weight === 400)),
-          'entry titles are differentiated from descriptions',
-        );
-      }
-      assert.equal(
-        await nav().getByRole('link', { name: label, exact: true }).getAttribute('aria-current'),
-        path.slice(1).includes('/') ? 'location' : 'page',
-      );
-      assert.equal(await nav().locator('a').count(), 4);
-      assert.equal(
-        await page.locator('.contact-links').getByRole('link').count(),
-        5,
-        'all contacts at bottom',
-      );
-      const emailBox = await page.locator('.contact-email').boundingBox();
-      const githubBox = await page
-        .locator('.site-footer')
-        .getByRole('link', { name: 'github', exact: true })
-        .boundingBox();
-      assert(
-        githubBox.y >= emailBox.y + emailBox.height,
-        'email is on its own row above social links',
-      );
-      const footerType = await page.locator('.contact-links a').evaluateAll((nodes) =>
-        nodes.map((el) => {
-          const style = getComputedStyle(el);
-          return [style.fontSize, style.fontFamily, style.lineHeight].join('|');
-        }),
-      );
-      assert.equal(new Set(footerType).size, 1, 'email and social links share typography');
-      assert.equal(
-        await page.locator('.contact-links').evaluate((el) => getComputedStyle(el).rowGap),
-        '0px',
-        'compact footer rows',
-      );
-      if (path === '/experience' || path === '/projects') {
-        const headingType = await page.locator('.reading-section h2').evaluateAll((nodes) =>
-          nodes.map((el) => {
-            const style = getComputedStyle(el);
-            return [style.fontSize, style.fontFamily, style.lineHeight].join('|');
-          }),
-        );
-        assert.equal(new Set(headingType).size, 1, 'consistent section heading typography');
-      }
-      assert.equal(await page.locator('.intro .contact-links').count(), 0);
-      assert.equal(await page.locator('.site-wordmark').count(), 0);
-      const header = await page.locator('.site-header').boundingBox();
-      const footer = await page.locator('.site-footer').boundingBox();
-      if (!sharedHeader) sharedHeader = header;
-      assert.equal(header.x, sharedHeader.x, 'shared header left edge');
-      assert.equal(header.y, sharedHeader.y, 'shared header top edge');
-      assert.equal(header.width, sharedHeader.width, 'shared header width');
-      assert.equal(header.height, sharedHeader.height, 'shared navigation wrapping');
-      assert.equal(footer.x, header.x, 'footer aligns with shared header');
-      assert.equal(footer.width, header.width, 'footer matches shared header width');
-      if (path !== '/') {
-        const body = await page.locator('main').boundingBox();
-        assert.equal(body.x, header.x, 'reading column aligns with navigation');
-        assert(body.width <= 740, 'reading column stays readable');
-      }
-      const position = await page.evaluate(() => {
-        const r = (s) => document.querySelector(s).getBoundingClientRect();
-        return {
-          header: r('.site-header').bottom,
-          main: r('main').top,
-          end: r('main').bottom,
-          footer: r('.site-footer').top,
-        };
-      });
-      assert(position.main >= position.header - 1, 'navigation before content');
-      assert(position.footer >= position.end, 'footer below content');
-      assert(position.footer - position.end <= 50, 'no viewport-sized footer gap');
-      assert.equal((await page.locator('.floral-border').boundingBox()).height, 48);
-      const rail = await page.locator('.banner-inner').boundingBox();
-      assert.equal(rail.x, header.x, 'banner frame aligns with shared header');
-      assert.equal(rail.width, header.width, 'banner frame matches shared header width');
-      assert.equal(
-        await page.locator('.floral-border').getAttribute('data-motif'),
-        'album-geometric-frame',
-      );
-      assert.equal(await page.locator('.ascii-sky').getAttribute('aria-hidden'), 'true');
-      if (path === '/') {
-        assert.equal(
-          await page.locator('.intro-bio').innerText(),
-          'looking for summer 2027 internships.',
-        );
-        assert.equal(
-          await page.locator('.project-entry').count(),
-          0,
-          'no detail sections on about',
-        );
-        assert.equal(await page.locator('.home-projects li').count(), 2);
-        const sizes = await page
-          .locator('.summary-link')
-          .evaluateAll((nodes) => nodes.map((el) => getComputedStyle(el).fontSize));
-        assert.equal(new Set(sizes).size, 1);
-        const intro = await page.locator('.intro').boundingBox(),
-          summary = await page.locator('.summary').boundingBox();
-        if (width >= 1024) assert(intro.x + intro.width <= summary.x + 1, 'two-column about');
-        else assert(summary.y >= intro.y + intro.height, 'stacked mobile about');
-      } else {
-        if (path === '/projects') assert.equal(await page.locator('.project-entry').count(), 2);
-        if (path === '/experience')
-          assert.equal(await page.locator('.experience-roles > div').count(), 2);
-        if (path === '/thoughts') {
-          assert.equal(await page.locator('.thought-entry').count(), 3);
-          assert.deepEqual(await page.locator('.thought-entry h2').allTextContents(), [
-            'why success feels average',
-            'the more you know, the less you do',
-            'who are we?',
-          ]);
-          assert.equal(
-            await page.locator('.thought-entry p').count(),
-            3,
-            'thought summaries are present',
-          );
-        }
-      }
-      if (path.slice(1).includes('/')) {
-        if (path === '/projects/mm-kinetics') {
-          assert.equal(await page.locator('.project-writeup').count(), 1);
-          assert.equal(await page.locator('.writeup-section').count(), 5);
-          assert.equal(await page.locator('.project-writeup img').count(), 5);
-          assert.equal(await page.locator('.writeup-section h2').count(), 5);
-          assert(
-            (await page.locator('.detail-content').innerText()).includes(
-              'starting with the reaction',
-            ),
-            'mm kinetics writeup is present',
-          );
-        } else if (path === '/projects/scrabble-solver') {
-          assert.equal(await page.locator('.writeup-section').count(), 5);
-          assert.equal(await page.locator('.project-writeup img').count(), 1);
-          assert.equal(await page.locator('.writeup-nav a').count(), 5);
-        } else if (path.startsWith('/projects/'))
-          assert.equal(
-            await page.locator('.detail-content').innerText(),
-            '',
-            'project detail body is empty',
-          );
-        else if (path.endsWith('/who-are-we')) {
-          assert.equal(await page.locator('.detail-content p').count(), 9);
-          assert.equal(await page.locator('.detail-content strong').count(), 2);
-          assert.equal(await page.locator('.detail-content h2').count(), 0);
-        } else if (path.endsWith('/the-more-you-know-the-less-you-do')) {
-          assert.equal(await page.locator('.detail-content p').count(), 7);
-          assert.equal(await page.locator('.detail-content strong').count(), 1);
-          assert(
-            (await page.locator('.detail-content strong').innerText()).endsWith(
-              "how much complexity you're still blind to.",
-            ),
-          );
-        } else {
-          assert.equal(await page.locator('.detail-content p').count(), 3);
-          assert(
-            (await page.locator('.detail-content p').last().innerText()).endsWith(
-              "how far we've already come.",
-            ),
-          );
-        }
-        const back = page.getByRole('link', { name: '← back to ' + label, exact: true });
-        assert.equal(await back.getAttribute('href'), '/' + label);
-      }
-      if ([1440, 390, 320].includes(width) || path === '/')
-        await page.screenshot({
-          path: `.qa/pages/${path === '/' ? 'about' : path.slice(1).replaceAll('/', '-')}-${width}.png`,
-          fullPage: true,
-        });
-    }
-    console.log(`Pages at ${width}×${height}: passed`);
-  }
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(base + '/thoughts');
-  await ready();
-  assert.equal(
-    await page.evaluate(() => getComputedStyle(document.documentElement).scrollbarGutter),
-    'stable',
-  );
-  const shortHeader = await page.locator('.site-header').boundingBox();
-  await page.evaluate(() => {
-    document.documentElement.style.overflowY = 'scroll';
-  });
-  assert.deepEqual(
-    await page.locator('.site-header').boundingBox(),
-    shortHeader,
-    'scrollbar appearance cannot shift header',
-  );
-  await page.evaluate(() => {
-    document.documentElement.style.removeProperty('overflow-y');
-  });
-  for (const label of ['projects', 'thoughts', 'experience', 'about']) {
-    await nav().getByRole('link', { name: label, exact: true }).click();
-    await ready();
-    assert.deepEqual(
-      await page.locator('.site-header').boundingBox(),
-      shortHeader,
-      'header stays fixed during page navigation',
-    );
-  }
-  await page.goto(base);
-  await ready();
-  for (const [path, label] of routes.slice(1, 4)) {
-    await nav().getByRole('link', { name: label, exact: true }).click();
-    await page.waitForURL(base + path);
-    await page.waitForFunction(() => document.activeElement === document.querySelector('main h1'));
-    await page.reload();
-    await ready();
-    assert.equal(new URL(page.url()).pathname, path);
-  }
-  await page.goBack();
-  await page.waitForURL(base + '/projects');
-  await page.goBack();
-  await page.waitForURL(base + '/experience');
-  await page.goForward();
-  await page.waitForURL(base + '/projects');
-  await nav().getByRole('link', { name: 'about', exact: true }).click();
-  for (const [name, path, hash] of [
-    ['nexaquanta', '/experience', '#experience'],
-    ['uwaterloo', '/experience', '#education'],
-    ['mm kinetics', '/projects/mm-kinetics', ''],
-    ['scrabble solver', '/projects/scrabble-solver', ''],
-    ['more projects', '/projects', ''],
-  ]) {
     await page.goto(base);
     await ready();
-    await page.getByRole('link', { name, exact: true }).click();
-    await page.waitForURL(base + path + hash);
-    await page.waitForFunction(
-      (hash) =>
-        document.activeElement ===
-        (hash ? document.querySelector(hash) : document.querySelector('main h1')),
-      hash,
+    await page.waitForFunction(() => {
+      const heading = document.querySelector('main h1');
+      const canvas = document.querySelector('.ascii-sky');
+      return (
+        getComputedStyle(heading).fontFamily === 'Inter' &&
+        document.fonts.check('15px Inter') &&
+        canvas.dataset.renderedTheme === document.documentElement.dataset.theme &&
+        document.fonts.check('10px "Geist Mono"')
+      );
+    });
+    assert.equal(await page.locator('header, .page-navigation').count(), 0);
+    assert.equal(await page.locator('main').count(), 1);
+    assert.equal(await page.locator('h1').count(), 1);
+    assert.deepEqual(
+      await page.locator('.page-section > h2').evaluateAll((nodes) => nodes.map((node) => node.id)),
+      ['experience', 'education', 'projects', 'thoughts'],
     );
+    assert.equal(await page.locator('.project-entry h3 a').count(), 2);
+    assert.equal(await page.locator('.thought-entry h3 a').count(), 3);
+    assert.equal(await page.locator('.project-writeup, .detail-content').count(), 0);
+    assert.equal(await page.locator('.education-entry').count(), 2);
+    assert.equal(await page.locator('.role-description').count(), 2);
+    assert(
+      await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+      'no horizontal overflow',
+    );
+    const footer = await page.locator('.site-footer').boundingBox();
+    const contactRows = (scope) =>
+      page.locator(`${scope} .contact-links :is(a, button)`).evaluateAll((links) => {
+        const top = links[0].getBoundingClientRect().top;
+        return links.map((link) => [
+          link.textContent.trim(),
+          Math.round(link.getBoundingClientRect().top - top),
+        ]);
+      });
+    const footerLinks = await contactRows('.site-footer');
+    assert.equal(footerLinks.length, 4);
+    assert.deepEqual(footerLinks, await contactRows('.intro-links'));
+    assert.equal(new Set(footerLinks.map(([, y]) => y)).size, width < 600 ? 2 : 1);
+    await page.getByRole('heading', { name: 'projects.', exact: true }).waitFor();
+    const main = await page.locator('main').boundingBox();
+    const banner = await page.locator('.banner-inner').boundingBox();
+    assert.equal(banner.x, main.x);
+    assert.equal(banner.width, main.width);
+    assert.equal(banner.height, 48);
+    assert.equal(main.x, footer.x);
+    assert.equal(main.width, footer.width);
+    assert(footer.y >= main.y + main.height);
+    const intro = await page.locator('.intro').boundingBox();
+    const summary = await page.locator('.summary').boundingBox();
+    const introLinks = await page.locator('.home-composition .intro-links').boundingBox();
+    const firstSection = await page.locator('.page-section').first().boundingBox();
+    assert.equal(intro.x, main.x, 'introduction aligns with the page column');
+    assert.equal(summary.x, main.x, 'summary aligns with the page column');
+    assert.equal(firstSection.x, main.x, 'sections align with the page column');
+    assert(summary.y >= intro.y + intro.height, 'summary follows the intro');
+    assert(introLinks.y >= summary.y + summary.height, 'contacts follow the summary');
+    assert(
+      firstSection.y - (introLinks.y + introLinks.height) <= 28,
+      'experience follows the intro contacts closely',
+    );
+    const centeredLeft = ((await page.evaluate(() => document.body.clientWidth)) - main.width) / 2;
+    const leftShift = centeredLeft - main.x;
+    if (width >= 1280) {
+      assert.equal(main.width, 720, 'desktop column uses the wider measure');
+      assert(leftShift >= 25 && leftShift <= 37, 'desktop column sits slightly left of center');
+    } else {
+      assert(Math.abs(leftShift) < 1, 'mobile column has even gutters');
+    }
+    await page.screenshot({ path: `.qa/pages/portfolio-${width}.png`, fullPage: true });
+    console.log(`Portfolio at ${width}×${height}: passed`);
+  }
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(base);
+  await ready();
+  for (const [name, id] of [
+    ['nexaquanta', 'experience'],
+    ['uwaterloo', 'education'],
+    ['view projects', 'projects'],
+  ]) {
+    await page.locator('.summary').getByRole('link', { name, exact: true }).click();
+    await page.waitForURL(base + '/#' + id);
+    await page.waitForFunction((id) => document.activeElement.id === id && scrollY > 0, id);
   }
   for (const [source, destination] of [
-    ['/what-ive-done', '/experience'],
-    ['/education', '/experience#education'],
+    ['/about', '/'],
+    ['/experience', '/#experience'],
+    ['/what-ive-done', '/#experience'],
+    ['/education', '/#education'],
+    ['/experience#education', '/#education'],
+    ['/projects', '/#projects'],
+    ['/thoughts', '/#thoughts'],
     ['/projects/kinetics', '/projects/mm-kinetics'],
     ['/projects/scrabble', '/projects/scrabble-solver'],
-    ['/projects/flashcards', '/projects'],
-    ['/projects/flashcards-app', '/projects'],
-    ['/thoughts/2am-thoughts-before-a-midterm', '/thoughts/why-success-feels-average'],
-    ...['mm-kinetics', 'scrabble-solver'].map((id) => ['/projects/' + id, '/projects/' + id]),
-    ...['raytracer', 'http', 'rag'].map((id) => ['/projects/' + id, '/projects']),
-    ['/#experience', '/experience#experience'],
-    ['/#education', '/experience#education'],
-    ['/#projects', '/projects'],
-    ['/#project-kinetics', '/projects/mm-kinetics'],
-    ['/#project-scrabble', '/projects/scrabble-solver'],
-    ['/#project-flashcards', '/projects'],
+    ['/projects/flashcards-app', '/#projects'],
+    ['/projects/rag', '/#projects'],
     ['/projects#project-kinetics', '/projects/mm-kinetics'],
+    ['/#project-scrabble', '/projects/scrabble-solver'],
     ['/thoughts#2am-thoughts-before-a-midterm', '/thoughts/why-success-feels-average'],
-    ['/about', '/'],
+    ['/thoughts/2am-thoughts-before-a-midterm', '/thoughts/why-success-feels-average'],
   ]) {
     await page.goto(base + source);
+    await page.waitForURL(base + destination);
     await ready();
-    assert.equal(page.url(), base + destination);
-    await page.reload();
-    await ready();
-    assert.equal(page.url(), base + destination);
     const hash = new URL(page.url()).hash;
     if (hash) await page.waitForFunction((id) => document.activeElement.id === id, hash.slice(1));
   }
-  for (const [path, label] of routes.slice(4)) {
-    const parent = '/' + label;
-    await page.goto(base + parent);
+  await page.goto(base + '/#projects');
+  await ready();
+  await page.waitForFunction(() => document.activeElement.id === 'projects');
+  await page.evaluate(() => window.scrollBy({ top: -220, behavior: 'instant' }));
+  const kinetics = page.getByRole('article', { name: 'mm kinetics', exact: true });
+  await kinetics.getByRole('link', { name: 'mm kinetics', exact: true }).hover();
+  assert.equal(await page.locator('.project-preview:visible').count(), 0);
+  assert.equal(await kinetics.locator('.project-preview').count(), 0);
+
+  const scrabble = page.getByRole('article', { name: 'scrabble solver', exact: true });
+  const title = scrabble.getByRole('link', { name: 'scrabble solver', exact: true });
+  const preview = scrabble.locator('.project-preview');
+  await scrabble.locator('p').first().hover();
+  await preview.waitFor({ state: 'hidden' });
+  await title.hover({ position: { x: 5, y: 5 } });
+  await preview.waitFor();
+  const locked = await preview.boundingBox();
+  const titleBox = await title.boundingBox();
+  assert(locked.y + locked.height < titleBox.y);
+  await title.hover({ position: { x: 30, y: 8 } });
+  assert.deepEqual(await preview.boundingBox(), locked, 'preview stays locked within the title');
+  assert.equal(await preview.locator('img').getAttribute('src'), '/projects/scrabble/solver.jpg');
+  await scrabble.locator('p').first().hover();
+  await preview.waitFor({ state: 'hidden' });
+  for (const [collection, id, images, paragraphs] of [
+    ['projects', 'mm-kinetics', 5, null],
+    ['projects', 'scrabble-solver', 1, null],
+    ['thoughts', 'why-success-feels-average', null, 3],
+    ['thoughts', 'the-more-you-know-the-less-you-do', null, 7],
+    ['thoughts', 'who-are-we', null, 9],
+  ]) {
+    const index = base + '/#' + collection;
+    const path = '/' + collection + '/' + id;
+    await page.goto(index);
     await ready();
-    const indexHeader = await page.locator('.site-header').boundingBox();
-    await page.locator('main a[href="' + path + '"]').click();
+    await page.locator(`.page-section h3 a[href="${path}"]`).click();
     await page.waitForURL(base + path);
     await page.waitForFunction(() => document.activeElement === document.querySelector('main h1'));
-    const titles = {
-      '/projects/mm-kinetics': 'mm kinetics',
-      '/projects/scrabble-solver': 'scrabble solver',
-      '/thoughts/why-success-feels-average': 'why success feels average',
-      '/thoughts/the-more-you-know-the-less-you-do': 'the more you know, the less you do',
-      '/thoughts/who-are-we': 'who are we?',
-    };
-    assert.equal(await page.title(), `${titles[path]} | Abdullah Ehsan`);
-    assert.deepEqual(await page.locator('.site-header').boundingBox(), indexHeader);
+    assert.equal(await page.locator('header').count(), 0);
+    if (images !== null) {
+      assert.equal(await page.locator('.writeup-section').count(), 5);
+      assert.equal(await page.locator('.writeup-section img').count(), images);
+    } else {
+      assert.equal(await page.locator('.detail-content p').count(), paragraphs);
+    }
     await page.reload();
     await ready();
-    if (path === '/projects/mm-kinetics')
-      assert.equal(await page.locator('.project-writeup img').count(), 5);
-    else if (path === '/projects/scrabble-solver')
-      assert.equal(await page.locator('.project-writeup img').count(), 1);
-    else if (path.startsWith('/projects/'))
-      assert.equal(await page.locator('.detail-content').innerText(), '');
-    else
-      assert.equal(
-        await page.locator('.detail-content p').count(),
-        path.endsWith('/who-are-we')
-          ? 9
-          : path.endsWith('/the-more-you-know-the-less-you-do')
-            ? 7
-            : 3,
-      );
     await page.goBack();
-    await page.waitForURL(base + parent);
+    await page.waitForURL(index);
     await page.goForward();
     await page.waitForURL(base + path);
-    await page.getByRole('link', { name: '← back to ' + label, exact: true }).click();
-    await page.waitForURL(base + parent);
+    const backLinks = page.locator('main').getByRole('link', { name: 'back', exact: true });
+    if (images !== null) await backLinks.nth(1).waitFor();
+    assert.equal(await backLinks.first().getAttribute('href'), '/#' + collection);
+    assert.equal(await backLinks.last().getAttribute('href'), '/#' + collection);
+    await backLinks.last().click();
+    await page.waitForURL(index);
+    await page.waitForFunction((id) => document.activeElement.id === id, collection);
   }
+  await page.setViewportSize({ width: 832, height: 950 });
+  await page.goto(base + '/thoughts/the-more-you-know-the-less-you-do');
+  await ready();
+  const articleBackLinks = page.locator('main').getByRole('link', { name: 'back', exact: true });
+  const endBack = page.locator('.detail-back--end');
+  await endBack.waitFor({ state: 'hidden' });
+  assert.equal(await articleBackLinks.count(), 1);
+  await page.setViewportSize({ width: 390, height: 540 });
+  await endBack.waitFor();
+  assert.equal(await articleBackLinks.count(), 2);
+  assert(
+    await articleBackLinks.evaluateAll(([top, bottom]) => {
+      const height = window.visualViewport?.height ?? innerHeight;
+      return bottom.getBoundingClientRect().top - top.getBoundingClientRect().bottom >= height;
+    }),
+    'back links never share the viewport',
+  );
+  await page.setViewportSize({ width: 832, height: 950 });
+  await endBack.waitFor({ state: 'hidden' });
+  assert.equal(await articleBackLinks.count(), 1);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(base + '/projects/mm-kinetics');
+  await page.getByRole('button', { name: 'enlarge starting with the reaction chart' }).click();
+  await page.getByRole('dialog', { name: 'Enlarged image' }).waitFor();
+  await page.keyboard.press('Escape');
+  await page.getByRole('dialog', { name: 'Enlarged image' }).waitFor({ state: 'hidden' });
   for (const path of ['/not-a-page', '/projects/unknown', '/thoughts/unknown']) {
     await page.goto(base + path);
     await page.getByRole('heading', { name: 'page not found.' }).waitFor();
     await page.getByRole('link', { name: 'return to the homepage', exact: true }).click();
     await page.waitForURL(base + '/');
   }
-  await page.goto(base + '/experience');
+  await page.goto(base);
   await ready();
   await page.getByRole('button', { name: 'back to top' }).click();
-  await page.waitForFunction(() => scrollY === 0);
-  assert.equal(
-    await page.evaluate(() => document.activeElement === document.querySelector('main h1')),
-    true,
+  await page.waitForFunction(
+    () => scrollY === 0 && document.activeElement === document.querySelector('main h1'),
   );
   await page.goto(base);
   await ready();
   const footer = page.locator('.site-footer');
+  const introContacts = page.locator('.home-composition .contact-links');
   for (const [name, url] of [
-    ['a2ehsan [at] uwaterloo [dot] ca', 'mailto:a2ehsan@uwaterloo.ca'],
     ['github', 'https://github.com/aehsan275'],
     ['linkedin', 'https://www.linkedin.com/in/abdullah-ehsan-960425399/'],
     ['x', 'https://x.com/abdullahehsn'],
-    ['cal', 'https://cal.com/abdullah-ehsan/30min'],
-  ])
+  ]) {
     assert.equal(await footer.getByRole('link', { name, exact: true }).getAttribute('href'), url);
+    assert.equal(
+      await introContacts.getByRole('link', { name, exact: true }).getAttribute('href'),
+      url,
+    );
+  }
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'], {
+    origin: new URL(base).origin,
+  });
+  for (const scope of [introContacts, footer]) {
+    assert.equal(await scope.locator('a[href*="cal.com"]').count(), 0);
+    await scope.getByRole('button', { name: /copy email address/i }).click();
+    await scope.getByText('email copied', { exact: true }).waitFor();
+    assert.equal(await page.evaluate(() => navigator.clipboard.readText()), 'a2ehsan@uwaterloo.ca');
+  }
   assert.equal(await footer.getByRole('link', { name: 'résumé', exact: true }).count(), 0);
   const resume = await page.request.get(base + '/resume.pdf');
   assert.notEqual((await resume.body()).subarray(0, 5).toString(), '%PDF-');
+  await page.goto(base);
+  await ready();
   await page.keyboard.press('Tab');
   assert.equal(await page.evaluate(() => document.activeElement.textContent), 'skip to content');
   await page.keyboard.press('Enter');
@@ -442,36 +271,16 @@ try {
   );
   await page.goto(base);
   await ready();
-  await page.evaluate(() =>
-    window.addEventListener(
-      'click',
-      (event) => {
-        window.__modifiedPrevented = event.defaultPrevented;
-      },
-      { once: true },
-    ),
-  );
-  await nav()
-    .getByRole('link', { name: 'projects', exact: true })
-    .dispatchEvent('click', { button: 0, ctrlKey: true, cancelable: true, bubbles: true });
-  assert.equal(
-    await page.evaluate(() => window.__modifiedPrevented),
-    false,
-    'modified click is not intercepted',
-  );
-  assert.equal(new URL(page.url()).pathname, '/');
-  console.log(
-    'Page navigation, legacy links, focus, history, contact URLs, PDF and modified clicks passed',
-  );
-  await page.goto(base);
-  await ready();
   const before = await page.locator('.name').boundingBox();
   await checkDotBackground(page, base);
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.locator('.name[data-reduced="false"]').waitFor();
+  await page.waitForFunction(() => document.querySelector('.name-urdu').getAnimations().length > 0);
   await page.locator('.name span').evaluateAll((nodes) =>
     nodes.forEach((node) =>
       node.getAnimations().forEach((animation) => {
-        animation.currentTime = 7000;
         animation.pause();
+        animation.currentTime = (animation.effect?.getTiming().delay ?? 0) + 7000;
       }),
     ),
   );
@@ -482,115 +291,6 @@ try {
   const after = await page.locator('.name').boundingBox();
   assert.equal(before.height, after.height);
   assert.equal(before.width, after.width);
-  await page.goto(base);
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  const marginCounts = [];
-  for (const width of [1280, 1920, 2560]) {
-    await page.setViewportSize({ width, height: 900 });
-    await page.evaluate(() => window.dispatchEvent(new Event('resize')));
-    await page.waitForFunction(() => {
-      const c = document.querySelector('.ascii-sky');
-      return c.width === Math.round(c.getBoundingClientRect().width * devicePixelRatio);
-    });
-    marginCounts.push(Number(await page.locator('.ascii-sky').getAttribute('data-motifs')));
-    const sizes = JSON.parse(await page.locator('.ascii-sky').getAttribute('data-motif-sizes'));
-    assert(
-      sizes.every((size) => size >= 32 && size <= 240),
-      'motifs vary within fixed pixel bounds',
-    );
-    if (width >= 1920) assert(new Set(sizes).size > 1, 'roomy margins retain varied sizes');
-    assert(
-      Number(await page.locator('.ascii-sky').getAttribute('data-motifs')) <=
-        (width === 1280 ? 2 : width === 1920 ? 4 : 8),
-      'sparse margin artwork',
-    );
-    const geometry = await page.evaluate(() => {
-      const c = document.querySelector('.ascii-sky'),
-        b = c.getBoundingClientRect(),
-        shell = document.querySelector('.site-shell').getBoundingClientRect();
-      return {
-        motifs: JSON.parse(c.dataset.motifLayout),
-        width: b.width,
-        height: b.height,
-        left: shell.left - b.left,
-        right: shell.right - b.left,
-      };
-    });
-    for (const m of geometry.motifs) {
-      assert(
-        m.y - m.radius >= 24 && m.y + m.radius <= geometry.height - 20,
-        'no top or bottom cropping',
-      );
-      if (m.edge)
-        assert.equal(
-          m.x,
-          m.edge === 'left' ? 0 : geometry.width,
-          'outer border bisects edge motif exactly',
-        );
-      else
-        assert(
-          m.x - m.radius >= 8 && m.x + m.radius <= geometry.width - 8,
-          'interior motif stays whole',
-        );
-      assert(
-        m.x + m.radius <= geometry.left - 16 || m.x - m.radius >= geometry.right + 16,
-        'whole motif clears the text column',
-      );
-    }
-    const restingArt = await page.locator('.ascii-sky').evaluate((c) => c.toDataURL());
-    await page.evaluate(() => window.dispatchEvent(new Event('resize')));
-    assert(
-      (await page.locator('.ascii-sky').evaluate((c) => c.toDataURL())) === restingArt,
-      'layout refresh does not rerandomize artwork',
-    );
-    await page.screenshot({ path: '.qa/pages/about-wide-' + width + '.png', fullPage: true });
-  }
-  assert(
-    marginCounts[1] >= marginCounts[0] && marginCounts[2] > marginCounts[0],
-    'larger margins reveal more sparse motifs instead of stretching them',
-  );
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(base);
-  await ready();
-  const readScene = () =>
-    page
-      .locator('.ascii-sky')
-      .evaluate((c) => ({ seed: c.dataset.motifSeed, motifs: JSON.parse(c.dataset.motifLayout) }));
-  const firstScene = await readScene();
-  for (const label of ['experience', 'projects', 'thoughts']) {
-    await nav().getByRole('link', { name: label, exact: true }).click();
-    await page.waitForFunction(() => document.activeElement === document.querySelector('main h1'));
-    const next = await readScene();
-    assert.equal(next.seed, firstScene.seed, 'one seed for the whole website view');
-    for (const motif of firstScene.motifs)
-      assert.deepEqual(
-        next.motifs.find((m) => m.id === motif.id),
-        motif,
-        'existing motif attributes and document position stay unchanged across pages',
-      );
-  }
-  await page.locator('main').getByRole('link', { name: 'who are we?', exact: true }).click();
-  await page.waitForFunction(() => document.activeElement === document.querySelector('main h1'));
-  const longScene = await readScene();
-  assert.equal(longScene.seed, firstScene.seed);
-  for (const motif of firstScene.motifs)
-    assert.deepEqual(
-      longScene.motifs.find((m) => m.id === motif.id),
-      motif,
-      'long page reveals more artwork without moving existing motifs',
-    );
-  await page.goBack();
-  await ready();
-  assert.equal((await readScene()).seed, firstScene.seed, 'browser history preserves scene');
-  await page.reload();
-  await ready();
-  const reloaded = await readScene();
-  assert.notEqual(reloaded.seed, firstScene.seed, 'reload creates a fresh scene');
-  assert.notDeepEqual(
-    reloaded.motifs,
-    firstScene.motifs,
-    'reload changes sizes, positions, and palette choices',
-  );
   await checkDotZoom(browser, base);
   await checkTheme(browser, base);
   assert.deepEqual(errors, [], 'no browser errors');
