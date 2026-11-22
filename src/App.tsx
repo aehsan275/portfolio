@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState, type MouseEvent } from 'react';
-import { education, experience, profile, projects, thoughts } from './data';
+import { education, experience, profile, projectHref, projects, thoughts } from './data';
 import { DotBackground } from './components/DotBackground';
 import { FloralBorder } from './components/FloralBorder';
 import { useTheme } from './useTheme';
@@ -184,7 +184,7 @@ function Home({ reduced, initialHome }: { reduced: boolean; initialHome: boolean
                 <ul className="home-projects">
                   {projects.slice(0, 2).map((project) => (
                     <li key={project.id}>
-                      <a className="d-link summary-link" href={`/projects/${project.id}`}>
+                      <a className="d-link summary-link" href={projectHref(project)}>
                         {project.title}
                       </a>
                       <span>{project.summary}</span>
@@ -491,7 +491,7 @@ function PageContent({
                 aria-labelledby={`project-${project.id}`}
               >
                 <h2 id={`project-${project.id}`} tabIndex={-1}>
-                  <a className="d-link" href={`/projects/${project.id}`}>
+                  <a className="d-link" href={projectHref(project)}>
                     {project.title}
                   </a>
                 </h2>

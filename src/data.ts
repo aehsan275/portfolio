@@ -44,6 +44,20 @@ export const education = {
 
 export const projects = [
   {
+    id: 'gpt2-rkt',
+    details: [] as readonly string[],
+    title: 'gpt-2 in racket',
+    summary: 'runs gpt-2 small in pure racket, built with amaar.',
+    description:
+      'a gpt-2 small inference engine in pure racket, with no blas and no ffi, built with amaar. the write-up lives on his site, shared between us, with interactive figures of how it runs.',
+    detail: '',
+    tech: ['racket', 'transformers', 'futures'],
+    note: '',
+    repository: '',
+    // The write-up is shared with amaar and lives on his site.
+    href: 'https://portfolio-v01-amber.vercel.app/gpt2-rkt.html',
+  },
+  {
     id: 'mm-kinetics',
     details: [] as readonly string[],
     writeup: {
@@ -215,6 +229,10 @@ export const projects = [
   },
 ] as const;
 export type Project = (typeof projects)[number];
+
+/** Where a project's title links: its own page, or a write-up hosted elsewhere. */
+export const projectHref = (project: Project) =>
+  'href' in project ? project.href : `/projects/${project.id}`;
 
 export const thoughts = [
   {

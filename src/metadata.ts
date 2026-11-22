@@ -6,7 +6,7 @@ export const pagePaths = [
   '/experience',
   '/projects',
   '/thoughts',
-  ...projects.map((project) => `/projects/${project.id}`),
+  ...projects.filter((project) => !('href' in project)).map((project) => `/projects/${project.id}`),
   ...thoughts.map((post) => `/thoughts/${post.id}`),
 ];
 
@@ -28,7 +28,7 @@ export function pageMetadata(path: string) {
     '/projects': {
       title: 'Software Projects | Abdullah Ehsan',
       description:
-        'Software projects by Abdullah Ehsan: MM Kinetics for enzyme reaction modelling and uncertainty estimation, and a Scrabble solver that ranks legal moves.',
+        'Software projects by Abdullah Ehsan: GPT-2 inference in pure Racket, MM Kinetics for enzyme reaction modelling and uncertainty estimation, and a Scrabble solver that ranks legal moves.',
     },
     '/thoughts': {
       title: 'Thoughts & Writing | Abdullah Ehsan',
