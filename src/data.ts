@@ -41,10 +41,20 @@ export const education = {
   },
 };
 
+const scrabbleScreenshot = {
+  image: '/projects/scrabble/solver.jpg',
+  imageSize: { width: 1128, height: 954 },
+  imageKind: 'screenshot',
+} as const;
+
 export const projects = [
   {
     id: 'gpt2-rkt',
     title: 'gpt-2 in racket',
+    preview: {
+      image: '/projects/gpt2-rkt/recorded-run.png',
+      imageSize: { width: 712, height: 812 },
+    },
     description: 'a gpt-2 small inference engine in pure racket',
     collaborator: { name: 'amaar', website: 'https://amaarsy.com/' },
     tech: ['racket', 'transformers', 'futures'],
@@ -159,7 +169,7 @@ export const projects = [
   },
   {
     id: 'scrabble-solver',
-    previewSection: 'the project',
+    preview: scrabbleScreenshot,
     details: [] as readonly string[],
     writeup: {
       subtitle: '',
@@ -172,11 +182,9 @@ export const projects = [
             'i built this python scrabble solver for a school project. it searches a dictionary of 279,496 words and shows the five highest-scoring moves it finds. the tricky part was getting a move to fit the board in both directions: every new tile can change a word across and a word down.',
             "while looking on google, i found andrew appel and guy jacobson's 1988 paper, the world's fastest scrabble program, and decided to try building a solver using its approach. i expected the paper to be difficult to read, so i was surprised by how much i understood. it introduced me to tries and recursive backtracking.",
           ],
-          image: '/projects/scrabble/solver.jpg',
-          imageSize: { width: 1128, height: 954 },
+          ...scrabbleScreenshot,
           imageAlt:
             'the scrabble solver interface with a populated board, rack RIF?AA?, and five suggested moves headed by SAFARIS for 94 points.',
-          imageKind: 'screenshot',
           caption:
             'the solver suggests SAFARIS for 94 points using the rack RIF?AA?. question marks are blank tiles.',
         },

@@ -149,27 +149,35 @@ try {
   await page.goto(base + '/#projects');
   await ready();
   await page.waitForFunction(() => document.activeElement.id === 'projects');
-  await page.evaluate(() => window.scrollBy({ top: -220, behavior: 'instant' }));
+  await page.evaluate(() => window.scrollBy({ top: -300, behavior: 'instant' }));
   const kinetics = page.getByRole('article', { name: 'mm kinetics', exact: true });
   await kinetics.getByRole('link', { name: 'mm kinetics', exact: true }).hover();
   assert.equal(await page.locator('.project-preview:visible').count(), 0);
   assert.equal(await kinetics.locator('.project-preview').count(), 0);
 
-  const scrabble = page.getByRole('article', { name: 'scrabble solver', exact: true });
-  const title = scrabble.getByRole('link', { name: 'scrabble solver', exact: true });
-  const preview = scrabble.locator('.project-preview');
-  await scrabble.locator('p').first().hover();
-  await preview.waitFor({ state: 'hidden' });
-  await title.hover({ position: { x: 5, y: 5 } });
-  await preview.waitFor();
-  const locked = await preview.boundingBox();
-  const titleBox = await title.boundingBox();
-  assert(locked.y + locked.height < titleBox.y);
-  await title.hover({ position: { x: 30, y: 8 } });
-  assert.deepEqual(await preview.boundingBox(), locked, 'preview stays locked within the title');
-  assert.equal(await preview.locator('img').getAttribute('src'), '/projects/scrabble/solver.jpg');
-  await scrabble.locator('p').first().hover();
-  await preview.waitFor({ state: 'hidden' });
+  for (const [name, image] of [
+    ['gpt-2 in racket', '/projects/gpt2-rkt/recorded-run.png'],
+    ['scrabble solver', '/projects/scrabble/solver.jpg'],
+  ]) {
+    const project = page.getByRole('article', { name, exact: true });
+    const title = project.getByRole('link', { name, exact: true });
+    const preview = project.locator('.project-preview');
+    await project.locator('p').first().hover();
+    await preview.waitFor({ state: 'hidden' });
+    await title.hover({ position: { x: 5, y: 5 } });
+    await preview.waitFor();
+    const locked = await preview.boundingBox();
+    const titleBox = await title.boundingBox();
+    assert(locked.y + locked.height < titleBox.y);
+    await title.hover({ position: { x: 30, y: 8 } });
+    assert.deepEqual(await preview.boundingBox(), locked, 'preview stays locked within the title');
+    assert.equal(await preview.locator('img').getAttribute('src'), image);
+    await preview.locator('img').evaluate((img) => img.decode());
+    await page.keyboard.press('Escape');
+    await preview.waitFor({ state: 'hidden' });
+    await title.hover({ position: { x: 5, y: 5 } });
+    assert.equal(await preview.isVisible(), false, 'Escape dismisses the preview until re-entry');
+  }
   for (const [collection, id, images, paragraphs] of [
     ['projects', 'mm-kinetics', 5, null],
     ['projects', 'scrabble-solver', 1, null],

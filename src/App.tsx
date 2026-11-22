@@ -194,11 +194,11 @@ function positionProjectPreview(title: HTMLAnchorElement, x: number, y: number) 
 }
 
 function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialHome: boolean }) {
-  const [previewDismissed, setPreviewDismissed] = useState(false);
+  const [activePreview, setActivePreview] = useState<string | null>(null);
 
   useEffect(() => {
     const dismissPreview = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setPreviewDismissed(true);
+      if (event.key === 'Escape') setActivePreview(null);
     };
     window.addEventListener('keydown', dismissPreview);
     return () => window.removeEventListener('keydown', dismissPreview);
@@ -329,12 +329,7 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
             projects
           </h2>
           {projects.map((project) => {
-            const previewSection: WriteupSection | undefined =
-              'previewSection' in project
-                ? project.writeup.sections.find(
-                    (section) => section.title === project.previewSection,
-                  )
-                : undefined;
+            const preview = 'preview' in project ? project.preview : undefined;
             return (
               <article
                 className="project-entry"
@@ -346,18 +341,16 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
                   <a
                     className="d-link project-title"
                     href={'href' in project ? project.href : `/projects/${project.id}`}
-                    data-preview-dismissed={
-                      previewSection?.image && previewDismissed ? '' : undefined
-                    }
+                    data-preview-active={preview && activePreview === project.id ? '' : undefined}
                     onPointerEnter={(event: PointerEvent<HTMLAnchorElement>) => {
-                      if (!previewSection?.image || event.pointerType !== 'mouse') return;
-                      setPreviewDismissed(false);
+                      if (!preview || event.pointerType !== 'mouse') return;
+                      setActivePreview(project.id);
                       positionProjectPreview(event.currentTarget, event.clientX, event.clientY);
                     }}
                     onFocus={(event) => {
                       const title = event.currentTarget;
-                      if (!previewSection?.image || !title.matches(':focus-visible')) return;
-                      setPreviewDismissed(false);
+                      if (!preview || !title.matches(':focus-visible')) return;
+                      setActivePreview(project.id);
                       const { left, width, top, height } = title.getBoundingClientRect();
                       positionProjectPreview(title, left + width / 2, top + height / 2);
                     }}
@@ -390,14 +383,12 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
                   )}
                 </div>
                 {project.note && <p className="project-note">{project.note}</p>}
-                {previewSection?.image && (
+                {preview && (
                   <figure className="project-preview" aria-hidden="true">
                     <img
-                      src={previewSection.image}
-                      {...previewSection.imageSize}
-                      className={
-                        previewSection.imageKind === 'screenshot' ? 'writeup-screenshot' : undefined
-                      }
+                      src={preview.image}
+                      {...preview.imageSize}
+                      className={'imageKind' in preview ? 'writeup-screenshot' : undefined}
                       alt=""
                       loading="lazy"
                       decoding="async"

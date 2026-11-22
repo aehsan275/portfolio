@@ -849,13 +849,13 @@ html[data-page-hidden='true'] .name > span {
     opacity var(--motion-fast) var(--motion-ease),
     visibility 0s linear var(--motion-fast);
 }
-.project-entry:has(.project-title:not([data-preview-dismissed]):focus-visible) .project-preview {
+.project-entry:has(.project-title[data-preview-active]:focus-visible) .project-preview {
   opacity: 1;
   visibility: visible;
   transition-delay: 0s;
 }
 @media (hover: hover) {
-  .project-entry:has(.project-title:not([data-preview-dismissed]):hover) .project-preview {
+  .project-entry:has(.project-title[data-preview-active]:hover) .project-preview {
     opacity: 1;
     visibility: visible;
     transition-delay: 0s;
