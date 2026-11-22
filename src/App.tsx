@@ -210,7 +210,6 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
         <div className="home-composition">
           <section className="intro" data-reading aria-label="About Abdullah">
             <Name reduced={reduced} initialHome={initialHome} />
-            <p className="intro-affiliation">{profile.name}</p>
             <p className="intro-bio">{profile.introduction}</p>
           </section>
           <div className="summary" data-reading>
@@ -875,7 +874,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
         </button>
         <PageContent path={route.path} reduced={reduced} initialHome={initialHome.current} />
         <footer className="site-footer" data-reading>
-          <p className="footer-name">abdullah ehsan</p>
+          <p className="footer-copyright">© {new Date().getFullYear()} abdullah ehsan</p>
           <CsWebring />
           <ContactLinks />
 

@@ -392,11 +392,6 @@ h1:focus {
 .name[data-initial-home='true'] .name-urdu {
   animation-delay: 2.4s;
 }
-.intro-affiliation {
-  font-family: var(--font-reading);
-  font-size: clamp(17px, 1.5vw, 21px);
-  line-height: 1.6;
-}
 .organization-name {
   display: inline-block;
   vertical-align: baseline;
@@ -932,7 +927,7 @@ html[data-page-hidden='true'] .name > span {
   -webkit-mask: url('/logos/cs-webring.svg') center / contain no-repeat;
   mask: url('/logos/cs-webring.svg') center / contain no-repeat;
 }
-.footer-name {
+.footer-copyright {
   margin-bottom: 8px;
   color: var(--ink-muted);
   font: 400 var(--type-small)/1.5 var(--font-reading);
