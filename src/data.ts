@@ -46,14 +46,10 @@ export const projects = [
     id: 'gpt2-rkt',
     title: 'gpt-2 in racket',
     description: 'a gpt-2 small inference engine in pure racket',
-    collaborator: {
-      name: 'amaar',
-      website: 'https://amaarsy.com/',
-      github: 'https://github.com/amaarsyed',
-    },
+    collaborator: { name: 'amaar', website: 'https://amaarsy.com/' },
     tech: ['racket', 'transformers', 'futures'],
     note: '',
-    repository: '',
+    repository: 'https://github.com/amaarsyed/gpt2-rkt',
     href: 'https://portfolio-v01-amber.vercel.app/gpt2-rkt.html',
   },
   {

@@ -373,15 +373,7 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
                       <a className="d-link" href={project.collaborator.website}>
                         {project.collaborator.name}
                       </a>
-                      {' ('}
-                      <a
-                        className="d-link"
-                        href={project.collaborator.github}
-                        aria-label={`${project.collaborator.name} on github`}
-                      >
-                        github ↗
-                      </a>
-                      ).
+                      .
                     </>
                   )}
                 </p>
