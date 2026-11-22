@@ -143,6 +143,7 @@ function Home({ reduced, initialHome }: { reduced: boolean; initialHome: boolean
           <div className="home-composition">
             <section className="intro" data-reading aria-label="About Abdullah">
               <Name reduced={reduced} initialHome={initialHome} />
+              <p className="intro-affiliation">{profile.name}</p>
               <p className="intro-bio">{profile.introduction}</p>
             </section>
             <div className="summary" data-reading>

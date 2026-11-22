@@ -18,7 +18,7 @@ export function pageMetadata(path: string) {
     '/': {
       title: 'Abdullah Ehsan | Computer Science at University of Waterloo',
       description:
-        'Abdullah Ehsan is a University of Waterloo computer science student. Explore his software projects, engineering experience, and writing. Seeking summer 2027 internships.',
+        'Abdullah Ehsan studies computer science at the University of Waterloo. Explore his software projects, work on AI agents and retrieval systems, and personal essays.',
     },
     '/experience': {
       title: 'Experience & Education | Abdullah Ehsan',
@@ -81,6 +81,9 @@ export function pageStructuredData(path: string) {
         '@type': 'Person',
         '@id': personId,
         name: profile.name,
+        givenName: 'Abdullah',
+        familyName: 'Ehsan',
+        alternateName: ['Abdullah', 'عبداللہ'],
         url: `${siteUrl}/`,
         description:
           'Computer science student at the University of Waterloo with software engineering internship experience at NexaQuanta.',
