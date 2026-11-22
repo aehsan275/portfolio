@@ -44,7 +44,17 @@ try {
       await page.locator('.page-section > h2').evaluateAll((nodes) => nodes.map((node) => node.id)),
       ['experience', 'education', 'projects', 'thoughts'],
     );
-    assert.equal(await page.locator('.project-entry h3 a').count(), 2);
+    const projectLinks = page.locator('.project-entry h3 a');
+    assert.deepEqual(await projectLinks.allTextContents(), [
+      'gpt-2 in racket',
+      'mm kinetics',
+      'scrabble solver',
+    ]);
+    assert.equal(
+      await projectLinks.first().getAttribute('href'),
+      'https://portfolio-v01-amber.vercel.app/gpt2-rkt.html',
+    );
+    assert.equal(await projectLinks.first().getAttribute('target'), null);
     assert.equal(await page.locator('.thought-entry h3 a').count(), 3);
     assert.equal(await page.locator('.project-writeup, .detail-content').count(), 0);
     assert.equal(await page.locator('.education-entry').count(), 2);
@@ -125,6 +135,8 @@ try {
     ['/projects/rag', '/#projects'],
     ['/projects#project-kinetics', '/projects/mm-kinetics'],
     ['/#project-scrabble', '/projects/scrabble-solver'],
+    ['/#project-gpt2-rkt', '/#project-gpt2-rkt'],
+    ['/projects#project-gpt2-rkt', '/#project-gpt2-rkt'],
     ['/thoughts#2am-thoughts-before-a-midterm', '/thoughts/why-success-feels-average'],
     ['/thoughts/2am-thoughts-before-a-midterm', '/thoughts/why-success-feels-average'],
   ]) {
@@ -219,7 +231,12 @@ try {
   await page.getByRole('dialog', { name: 'Enlarged image' }).waitFor();
   await page.keyboard.press('Escape');
   await page.getByRole('dialog', { name: 'Enlarged image' }).waitFor({ state: 'hidden' });
-  for (const path of ['/not-a-page', '/projects/unknown', '/thoughts/unknown']) {
+  for (const path of [
+    '/not-a-page',
+    '/projects/unknown',
+    '/projects/gpt2-rkt',
+    '/thoughts/unknown',
+  ]) {
     await page.goto(base + path);
     await page.getByRole('heading', { name: 'page not found.' }).waitFor();
     await page.getByRole('link', { name: 'return to the homepage', exact: true }).click();

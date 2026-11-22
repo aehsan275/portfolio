@@ -43,6 +43,15 @@ export const education = {
 
 export const projects = [
   {
+    id: 'gpt2-rkt',
+    title: 'gpt-2 in racket',
+    description: 'a gpt-2 small inference engine built with amaar in pure racket.',
+    tech: ['racket', 'transformers', 'futures'],
+    note: '',
+    repository: '',
+    href: 'https://portfolio-v01-amber.vercel.app/gpt2-rkt.html',
+  },
+  {
     id: 'mm-kinetics',
     details: [] as readonly string[],
     writeup: {
@@ -221,6 +230,9 @@ export const projects = [
   },
 ] as const;
 export type Project = (typeof projects)[number];
+export const localProjects = projects.filter(
+  (project): project is Exclude<Project, { href: string }> => !('href' in project),
+);
 
 export const thoughts = [
   {

@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState, type MouseEvent, type PointerEvent } from 'react';
-import { education, experience, profile, projects, thoughts } from './data';
+import { education, experience, localProjects, profile, projects, thoughts } from './data';
 import { DotBackground } from './components/DotBackground';
 import { FloralBorder } from './components/FloralBorder';
 import { useTheme } from './useTheme';
@@ -345,7 +345,7 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
                 <h3 id={`project-${project.id}`} tabIndex={-1}>
                   <a
                     className="d-link project-title"
-                    href={`/projects/${project.id}`}
+                    href={'href' in project ? project.href : `/projects/${project.id}`}
                     data-preview-dismissed={
                       previewSection?.image && previewDismissed ? '' : undefined
                     }
@@ -418,7 +418,7 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
 }
 
 function getDetail(path: string) {
-  const project = projects.find((item) => path === '/projects/' + item.id);
+  const project = localProjects.find((item) => path === '/projects/' + item.id);
   if (project) return { ...project, parentLabel: 'projects' };
   const post = thoughts.find((item) => path === '/thoughts/' + item.id);
   if (post) return { ...post, parentLabel: 'thoughts' };
@@ -706,12 +706,12 @@ function readLocation(): Location {
   if ((path === '/' || path === '/projects' || path === '/thoughts') && oldFragments[url.hash])
     destination = oldFragments[url.hash];
   if (path === '/') {
-    if (projects.some((p) => url.hash === '#project-' + p.id))
+    if (localProjects.some((p) => url.hash === '#project-' + p.id))
       destination = '/projects/' + url.hash.slice('#project-'.length);
     else if (['#project-raytracer', '#project-http', '#project-rag'].includes(url.hash))
       destination = '/projects';
   }
-  if (path === '/projects' && projects.some((p) => url.hash === '#project-' + p.id))
+  if (path === '/projects' && localProjects.some((p) => url.hash === '#project-' + p.id))
     destination = '/projects/' + url.hash.slice('#project-'.length);
   if (path === '/thoughts' && thoughts.some((p) => url.hash === '#' + p.id))
     destination = '/thoughts/' + url.hash.slice(1);

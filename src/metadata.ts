@@ -1,14 +1,14 @@
-import { profile, projects, thoughts } from './data';
+import { localProjects, profile, thoughts } from './data';
 
 export const siteUrl = 'https://abdullahehsan.vercel.app';
 export const pagePaths = [
   '/',
-  ...projects.map((project) => `/projects/${project.id}`),
+  ...localProjects.map((project) => `/projects/${project.id}`),
   ...thoughts.map((post) => `/thoughts/${post.id}`),
 ];
 
 export function pageMetadata(path: string) {
-  const detail = [...projects, ...thoughts].find(
+  const detail = [...localProjects, ...thoughts].find(
     (item) => path === `/projects/${item.id}` || path === `/thoughts/${item.id}`,
   );
   const pages: Record<string, { title: string; description: string }> = {
