@@ -76,7 +76,7 @@ try {
     assert.equal(footerLinks.length, 4);
     assert.deepEqual(footerLinks, await contactRows('.intro-links'));
     assert.equal(new Set(footerLinks.map(([, y]) => y)).size, width < 600 ? 2 : 1);
-    await page.getByRole('heading', { name: 'projects.', exact: true }).waitFor();
+    await page.getByRole('heading', { name: 'projects', exact: true }).waitFor();
     const main = await page.locator('main').boundingBox();
     const banner = await page.locator('.banner-inner').boundingBox();
     assert.equal(banner.x, main.x);
@@ -238,7 +238,7 @@ try {
     '/thoughts/unknown',
   ]) {
     await page.goto(base + path);
-    await page.getByRole('heading', { name: 'page not found.' }).waitFor();
+    await page.getByRole('heading', { name: 'page not found', exact: true }).waitFor();
     await page.getByRole('link', { name: 'return to the homepage', exact: true }).click();
     await page.waitForURL(base + '/');
   }

@@ -268,7 +268,7 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
       <div className="portfolio-details">
         <section className="reading-section page-section" data-reading aria-labelledby="experience">
           <h2 id="experience" tabIndex={-1}>
-            experience.
+            experience
           </h2>
           <h3 className="organization-name">
             <a className="d-link marker-link marker-link--nexaquanta" href="https://nexaquanta.ai/">
@@ -288,8 +288,8 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
           </dl>
         </section>
         <section className="reading-section page-section" data-reading aria-labelledby="education">
-          <h2 className="section-label" id="education" tabIndex={-1}>
-            education.
+          <h2 id="education" tabIndex={-1}>
+            education
           </h2>
           <div className="education-entry">
             <div className="education-heading">
@@ -326,7 +326,7 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
         </section>
         <section className="reading-section page-section" aria-labelledby="projects">
           <h2 id="projects" data-reading tabIndex={-1}>
-            projects.
+            projects
           </h2>
           {projects.map((project) => {
             const previewSection: WriteupSection | undefined =
@@ -410,7 +410,7 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
         </section>
         <section className="reading-section page-section" aria-labelledby="thoughts">
           <h2 id="thoughts" data-reading tabIndex={-1}>
-            thoughts.
+            thoughts
           </h2>
           {thoughts.map((post) => (
             <article className="thought-entry" data-reading key={post.id} aria-labelledby={post.id}>
@@ -419,7 +419,7 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
                   {post.title}
                 </a>
               </h3>
-              <p className="thought-summary">{post.summary}</p>
+              <p>{post.summary}</p>
             </article>
           ))}
         </section>
@@ -680,7 +680,7 @@ function PageContent({
   if (detail) return <DetailPage key={path} detail={detail} />;
   return (
     <main id="main" className="inner-page portfolio-details" tabIndex={-1} data-reading>
-      <h1 tabIndex={-1}>page not found.</h1>
+      <h1 tabIndex={-1}>page not found</h1>
       <p>there isn’t a page at this address.</p>
       <a className="d-link" href="/">
         return to the homepage
