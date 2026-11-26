@@ -52,7 +52,7 @@ try {
     ]);
     assert.equal(
       await projectLinks.first().getAttribute('href'),
-      'https://portfolio-v01-amber.vercel.app/gpt2-rkt.html',
+      'https://gpt2-rkt.vercel.app/?from=abdullah',
     );
     assert.equal(await projectLinks.first().getAttribute('target'), null);
     assert.equal(await page.locator('.thought-entry h3 a').count(), 3);

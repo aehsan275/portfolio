@@ -60,7 +60,7 @@ export const projects = [
     tech: ['racket', 'transformers', 'futures'],
     note: '',
     repository: 'https://github.com/amaarsyed/gpt2-rkt',
-    href: 'https://portfolio-v01-amber.vercel.app/gpt2-rkt.html',
+    href: 'https://gpt2-rkt.vercel.app/?from=abdullah',
   },
   {
     id: 'mm-kinetics',
