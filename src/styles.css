@@ -948,12 +948,14 @@ html[data-page-hidden='true'] .name > span {
   .cs-webring {
     position: static;
     gap: 0;
-    border-radius: var(--radius-field);
-    box-shadow: inset 0 0 0 1px var(--rule);
   }
-  .cs-webring a:active {
-    background: var(--color-base-200);
-    border-radius: inherit;
+  .cs-webring a:first-child {
+    justify-content: flex-end;
+    padding-inline-end: var(--space-1);
+  }
+  .cs-webring a:last-child {
+    justify-content: flex-start;
+    padding-inline-start: var(--space-1);
   }
 }
 
