@@ -16,6 +16,20 @@ const ready = async () => {
   await page.locator('main').waitFor();
   await page.evaluate(() => document.fonts.ready);
 };
+const checkLinkTargets = async () => {
+  const links = await page.locator('a[href]').evaluateAll((anchors) =>
+    anchors.map((anchor) => ({
+      href: anchor.href,
+      target: anchor.target,
+      rel: anchor.rel,
+    })),
+  );
+  for (const { href, target, rel } of links) {
+    const external = new URL(href).origin !== new URL(base).origin;
+    assert.equal(target, external ? '_blank' : '', href);
+    if (external) assert(rel.split(/\s+/).includes('noopener'), href);
+  }
+};
 try {
   for (const [width, height] of [
     [1280, 720],
@@ -54,7 +68,12 @@ try {
       await projectLinks.first().getAttribute('href'),
       'https://gpt2-rkt.vercel.app/?from=abdullah',
     );
-    assert.equal(await projectLinks.first().getAttribute('target'), null);
+    await checkLinkTargets();
+    const projectDescriptions = await page
+      .locator('.project-entry > p:first-of-type')
+      .allTextContents();
+    assert.equal(projectDescriptions.length, 3);
+    assert(projectDescriptions.every((description) => /[^\s.]\.$/.test(description)));
     assert.equal(await page.locator('.thought-entry h3 a').count(), 3);
     assert.equal(await page.locator('.project-writeup, .detail-content').count(), 0);
     assert.equal(await page.locator('.role-description').count(), 2);
@@ -219,6 +238,7 @@ try {
     await page.locator(`.page-section h3 a[href="${path}"]`).click();
     await page.waitForURL(base + path);
     await page.waitForFunction(() => document.activeElement === document.querySelector('main h1'));
+    await checkLinkTargets();
     assert.equal(await page.locator('header').count(), 0);
     if (images !== null) {
       assert.equal(await page.locator('.writeup-section').count(), 5);

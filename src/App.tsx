@@ -1,11 +1,36 @@
-import { Fragment, useEffect, useRef, useState, type MouseEvent, type PointerEvent } from 'react';
+import {
+  Fragment,
+  useEffect,
+  useRef,
+  useState,
+  type ComponentProps,
+  type MouseEvent,
+  type PointerEvent,
+} from 'react';
 import { experience, localProjects, profile, projects, thoughts } from './data';
 import { DotBackground } from './components/DotBackground';
 import { FloralBorder } from './components/FloralBorder';
 import { useTheme } from './useTheme';
-import { pageMetadata, pageStructuredData } from './metadata';
+import { pageMetadata, pageStructuredData, siteUrl } from './metadata';
 import './styles/daisy.css';
 import './styles.css';
+
+function SiteLink({
+  href,
+  ...props
+}: Omit<ComponentProps<'a'>, 'href' | 'target' | 'rel'> & { href: string }) {
+  const url = new URL(href, siteUrl);
+  const external =
+    (url.protocol === 'https:' || url.protocol === 'http:') && url.origin !== siteUrl;
+  return (
+    <a
+      {...props}
+      href={href}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noopener' : undefined}
+    />
+  );
+}
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(
@@ -94,15 +119,15 @@ function ContactLinks() {
           {copyStatus === 'failed' && `couldn’t copy automatically. email: ${profile.email}`}
         </span>
       </span>
-      <a className="d-link" href={profile.github}>
+      <SiteLink className="d-link" href={profile.github}>
         github
-      </a>
-      <a className="d-link" href={profile.linkedin}>
+      </SiteLink>
+      <SiteLink className="d-link" href={profile.linkedin}>
         linkedin
-      </a>
-      <a className="d-link" href={profile.x}>
+      </SiteLink>
+      <SiteLink className="d-link" href={profile.x}>
         x
-      </a>
+      </SiteLink>
     </nav>
   );
 }
@@ -111,15 +136,15 @@ function CsWebring() {
   const ring = 'https://cs.uwatering.com/#abdullahehsan.vercel.app';
   return (
     <nav className="cs-webring" aria-label="Waterloo CS webring">
-      <a href={`${ring}?nav=prev`} aria-label="Previous site in the Waterloo CS webring">
+      <SiteLink href={`${ring}?nav=prev`} aria-label="Previous site in the Waterloo CS webring">
         ←
-      </a>
-      <a href={ring} className="cs-webring-mark" aria-label="Waterloo CS webring">
+      </SiteLink>
+      <SiteLink href={ring} className="cs-webring-mark" aria-label="Waterloo CS webring">
         <span aria-hidden="true" />
-      </a>
-      <a href={`${ring}?nav=next`} aria-label="Next site in the Waterloo CS webring">
+      </SiteLink>
+      <SiteLink href={`${ring}?nav=next`} aria-label="Next site in the Waterloo CS webring">
         →
-      </a>
+      </SiteLink>
     </nav>
   );
 }
@@ -225,13 +250,13 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
               </h2>
               <p className="study-line">
                 cs @{' '}
-                <a
+                <SiteLink
                   className="d-link summary-link organization-name marker-link marker-link--waterloo"
                   href="https://uwaterloo.ca/"
                 >
                   <OrganizationMark name="waterloo" />
                   uwaterloo
-                </a>
+                </SiteLink>
               </p>
             </section>
             <section className="summary-group" aria-labelledby="building">
@@ -240,16 +265,16 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
               </h2>
               <p className="study-line">
                 swe @{' '}
-                <a
+                <SiteLink
                   className="d-link summary-link organization-name marker-link marker-link--nexaquanta"
                   href="#experience"
                 >
                   <OrganizationMark name="nexaquanta" />
                   nexaquanta
-                </a>
+                </SiteLink>
               </p>
             </section>
-            <a className="d-link projects-link" href="#projects">
+            <SiteLink className="d-link projects-link" href="#projects">
               <span>view projects</span>
               <svg
                 viewBox="0 0 16 16"
@@ -264,7 +289,7 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
               >
                 <path d="M8 3.5v8.75m-3.25-3.3L8 12.25l3.25-3.3" />
               </svg>
-            </a>
+            </SiteLink>
           </div>
           <div className="intro-links" id="links" data-reading tabIndex={-1}>
             <ContactLinks />
@@ -277,10 +302,13 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
             experience
           </h2>
           <h3 className="organization-name">
-            <a className="d-link marker-link marker-link--nexaquanta" href="https://nexaquanta.ai/">
+            <SiteLink
+              className="d-link marker-link marker-link--nexaquanta"
+              href="https://nexaquanta.ai/"
+            >
               <OrganizationMark name="nexaquanta" />
               {experience.company}
-            </a>
+            </SiteLink>
           </h3>
           <p>{experience.summary}</p>
           <dl className="experience-roles">
@@ -307,7 +335,7 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
                 aria-labelledby={`project-${project.id}`}
               >
                 <h3 id={`project-${project.id}`} tabIndex={-1}>
-                  <a
+                  <SiteLink
                     className="d-link project-title"
                     href={'href' in project ? project.href : `/projects/${project.id}`}
                     data-preview-active={preview && activePreview === project.id ? '' : undefined}
@@ -325,30 +353,30 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
                     }}
                   >
                     {project.title}
-                  </a>
+                  </SiteLink>
                 </h3>
                 <p>
                   {project.description}
                   {'descriptionLink' in project && (
                     <>
                       {' '}
-                      <a className="d-link" href={project.descriptionLink.href}>
+                      <SiteLink className="d-link" href={project.descriptionLink.href}>
                         {project.descriptionLink.label}
-                      </a>
-                      .
+                      </SiteLink>
                     </>
                   )}
+                  .
                 </p>
                 <div className="project-meta">
                   <p className="technologies">{project.tech.join(' / ')}</p>
                   {project.repository && (
-                    <a
+                    <SiteLink
                       className="d-link project-source"
                       href={project.repository}
                       aria-label={`${project.title} on github`}
                     >
                       github ↗
-                    </a>
+                    </SiteLink>
                   )}
                 </div>
                 {project.note && <p className="project-note">{project.note}</p>}
@@ -377,9 +405,9 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
           {thoughts.map((post) => (
             <article className="thought-entry" data-reading key={post.id} aria-labelledby={post.id}>
               <h3 id={post.id} tabIndex={-1}>
-                <a className="d-link thought-title" href={`/thoughts/${post.id}`}>
+                <SiteLink className="d-link thought-title" href={`/thoughts/${post.id}`}>
                   {post.title}
-                </a>
+                </SiteLink>
               </h3>
               <p>{post.summary}</p>
             </article>
@@ -442,9 +470,13 @@ function ProjectWriteup({
       {subtitle && <p className="writeup-subtitle">{subtitle}</p>}
       <nav className="writeup-nav" aria-label="On this page">
         {sections.map((section, index) => (
-          <a className="d-link" key={section.title} href={`#${section.id ?? sectionIds[index]}`}>
+          <SiteLink
+            className="d-link"
+            key={section.title}
+            href={`#${section.id ?? sectionIds[index]}`}
+          >
             {section.label ?? sectionLabels[index]}
-          </a>
+          </SiteLink>
         ))}
       </nav>
       {sections.map((section, index) => (
@@ -585,19 +617,19 @@ function DetailPage({ detail }: { detail: NonNullable<ReturnType<typeof getDetai
 
   return (
     <main id="main" className="inner-page portfolio-details detail-entry" tabIndex={-1}>
-      <a ref={topBack} className="d-link detail-back" href={backHref}>
+      <SiteLink ref={topBack} className="d-link detail-back" href={backHref}>
         back
-      </a>
+      </SiteLink>
       <div className="detail-title" data-reading>
         <h1 tabIndex={-1}>{detail.title}</h1>
         {'repository' in detail && detail.repository && (
-          <a
+          <SiteLink
             className="d-link project-source"
             href={detail.repository}
             aria-label={`${detail.title} on github`}
           >
             github ↗
-          </a>
+          </SiteLink>
         )}
       </div>
       <div ref={content} className="detail-content" data-reading>
@@ -620,9 +652,9 @@ function DetailPage({ detail }: { detail: NonNullable<ReturnType<typeof getDetai
         )}
       </div>
       {showBottomBack && (
-        <a className="d-link detail-back detail-back--end" href={backHref}>
+        <SiteLink className="d-link detail-back detail-back--end" href={backHref}>
           back
-        </a>
+        </SiteLink>
       )}
     </main>
   );
@@ -644,9 +676,9 @@ function PageContent({
     <main id="main" className="inner-page portfolio-details" tabIndex={-1} data-reading>
       <h1 tabIndex={-1}>page not found</h1>
       <p>there isn’t a page at this address.</p>
-      <a className="d-link" href="/">
+      <SiteLink className="d-link" href="/">
         return to the homepage
-      </a>
+      </SiteLink>
     </main>
   );
 }
@@ -810,9 +842,9 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
   };
   return (
     <div id="top" tabIndex={-1} className="portfolio" data-theme={theme} onClick={navigate}>
-      <a className="skip-link d-link" href="#main">
+      <SiteLink className="skip-link d-link" href="#main">
         skip to content
-      </a>
+      </SiteLink>
       <DotBackground reduced={reduced} pageKey={route.path} theme={theme} />
       <FloralBorder />
       <div className="site-shell">

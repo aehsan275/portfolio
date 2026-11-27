@@ -1,7 +1,6 @@
 export const profile = {
   name: 'Abdullah Ehsan',
-  introduction:
-    'looking for summer 2027 internships.',
+  introduction: 'looking for summer 2027 internships.',
   email: 'a2ehsan@uwaterloo.ca',
   github: 'https://github.com/aehsan275',
   linkedin: 'https://www.linkedin.com/in/abdullah-ehsan-960425399/',
