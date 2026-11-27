@@ -108,6 +108,29 @@ try {
     await page.screenshot({ path: `.qa/pages/portfolio-${width}.png`, fullPage: true });
     console.log(`Portfolio at ${width}×${height}: passed`);
   }
+  const touchPage = await browser.newPage({ isMobile: true, hasTouch: true });
+  try {
+    for (const width of [320, 390]) {
+      await touchPage.setViewportSize({ width, height: 760 });
+      await touchPage.goto(base);
+      await touchPage.evaluate(() => document.fonts.ready);
+      const footer = touchPage.locator('.site-footer');
+      const copyright = await footer.locator('.footer-copyright').boundingBox();
+      const webring = footer.getByRole('navigation', { name: 'Waterloo CS webring' });
+      const controls = await webring.boundingBox();
+      const email = await footer.getByRole('button', { name: /copy email address/i }).boundingBox();
+      assert(copyright.height < 24, 'copyright fits on a single line at the default text size');
+      assert.equal(copyright.y + copyright.height / 2, controls.y + controls.height / 2);
+      assert(copyright.x + copyright.width < controls.x, 'copyright has room beside the webring');
+      assert(controls.y + controls.height < email.y, 'webring tap targets clear the email button');
+      for (const link of await webring.getByRole('link').all()) {
+        const box = await link.boundingBox();
+        assert(box.width >= 44 && box.height >= 44, 'webring links have 44px touch targets');
+      }
+    }
+  } finally {
+    await touchPage.close();
+  }
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(base);
   await ready();
