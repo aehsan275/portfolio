@@ -329,11 +329,11 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
                 </h3>
                 <p>
                   {project.description}
-                  {'collaborator' in project && (
+                  {'descriptionLink' in project && (
                     <>
-                      , built with{' '}
-                      <a className="d-link" href={project.collaborator.website}>
-                        {project.collaborator.name}
+                      {' '}
+                      <a className="d-link" href={project.descriptionLink.href}>
+                        {project.descriptionLink.label}
                       </a>
                       .
                     </>

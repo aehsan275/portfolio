@@ -41,8 +41,8 @@ export const projects = [
       image: '/projects/gpt2-rkt/recorded-run.png',
       imageSize: { width: 712, height: 722 },
     },
-    description: 'a gpt-2 small inference engine in pure racket',
-    collaborator: { name: 'amaar', website: 'https://amaarsy.com/' },
+    description: 'a gpt-2 small inference engine in pure racket, built with',
+    descriptionLink: { label: 'amaar', href: 'https://amaarsy.com/' },
     tech: ['racket', 'transformers', 'futures'],
     note: '',
     repository: 'https://github.com/amaarsyed/gpt2-rkt',
@@ -145,8 +145,7 @@ export const projects = [
     },
     title: 'mm kinetics',
     summary: 'fits enzyme reaction curves and estimates uncertainty.',
-    description:
-      'a python pipeline for fitting enzyme reaction curves and estimating the uncertainty in those fits.',
+    description: 'fitting enzyme reaction curves and estimating uncertainty',
     detail:
       'uses michaelis–menten curve fitting, bootstrap intervals and regression models. examples use synthetic data. validation groups samples by enzyme and includes conformal prediction intervals.',
     tech: ['python', 'numpy', 'scipy', 'scikit-learn'],
@@ -215,8 +214,11 @@ export const projects = [
     },
     title: 'scrabble solver',
     summary: 'finds and ranks legal moves from your board and rack.',
-    description:
-      'a scrabble solver i built for school. it finds and ranks legal moves from the board and your rack.',
+    description: 'reproducing appel and jacobson’s 1988',
+    descriptionLink: {
+      label: 'paper',
+      href: 'https://users.cs.northwestern.edu/~robby/uc-courses/22001-2008-winter/worlds-fastest-scrabble-appel-jacobson.pdf',
+    },
     detail:
       'uses anchor squares, cross-checks and trie search to prune invalid moves. a tkinter board lets you enter a rack, try positions and inspect the results.',
     tech: ['python', 'tkinter', 'trie'],
