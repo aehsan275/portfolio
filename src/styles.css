@@ -137,12 +137,10 @@ h1:focus {
 .skip-link:focus {
   top: 34px;
 }
-:is(.portfolio-details h3, .summary-link) {
+.portfolio-details h3 {
   font-size: var(--type-entry);
   line-height: 1.45;
   letter-spacing: -0.015em;
-}
-.portfolio-details h3 {
   margin: 0 0 var(--space-1);
 }
 .portfolio-details p {
@@ -362,7 +360,7 @@ h1:focus {
   align-items: center;
   justify-items: start;
   font-family: var(--font-reading);
-  font-size: clamp(36px, 6vw, 48px);
+  font-size: clamp(50px, 8vw, 72px);
   font-weight: var(--weight-strong);
   line-height: 1.1;
   letter-spacing: -0.04em;
@@ -579,7 +577,9 @@ h1:focus {
   );
 }
 .intro-bio {
-  margin-top: var(--space-3);
+  margin-top: var(--space-4);
+  color: var(--ink-heading);
+  font-size: clamp(18px, 16px + 0.55vw, 21px);
   text-wrap: pretty;
 }
 .intro-links {
@@ -671,11 +671,17 @@ h1:focus {
   line-height: var(--compact-leading);
 }
 .summary {
-  margin-top: var(--space-4);
+  margin-top: var(--space-5);
+  font-size: clamp(16px, 14px + 0.55vw, 18px);
+}
+.summary-link {
+  font-size: clamp(18px, 14px + 1.25vw, 22px);
+  line-height: 1.45;
+  letter-spacing: -0.015em;
 }
 .summary-group {
   display: grid;
-  grid-template-columns: 76px minmax(0, 1fr);
+  grid-template-columns: 4.75em minmax(0, 1fr);
   align-items: baseline;
   column-gap: var(--space-2);
 }
@@ -684,7 +690,6 @@ h1:focus {
 }
 @media (max-width: 359px) {
   .summary-group {
-    grid-template-columns: 72px minmax(0, 1fr);
     column-gap: var(--space-1);
   }
 }
@@ -697,10 +702,14 @@ h1:focus {
   align-items: center;
   gap: var(--space-1);
   min-height: 44px;
-  margin-top: var(--space-2);
+  margin-top: var(--space-3);
   color: var(--ink-heading);
   font-weight: var(--weight-strong);
   text-decoration-line: none;
+}
+.projects-link svg {
+  width: 1em;
+  height: 1em;
 }
 .projects-link > span {
   text-decoration-line: underline;
