@@ -1,6 +1,5 @@
 export const profile = {
   name: 'Abdullah Ehsan',
-  affiliation: 'cs @ uwaterloo',
   introduction:
     'looking for summer 2027 internships.',
   email: 'a2ehsan@uwaterloo.ca',
@@ -26,19 +25,6 @@ export const experience = {
         'built a rag system that retrieved relevant wikipedia passages to ground gemini responses. it was my first time having external responsibility and a glimpse into how the industry operates.',
     },
   ],
-};
-
-export const education = {
-  institution: 'university of waterloo',
-  program: 'computer science',
-  dates: '2026–2031',
-  reflection: 'uni math is so different from high school.',
-  priorCourse: {
-    institution: 'university of calgary',
-    program: 'CPSC217 dual credit',
-    dates: 'summer 2025',
-    reflection: 'took this purely for the love of the game, ended with 97%.',
-  },
 };
 
 const scrabbleScreenshot = {

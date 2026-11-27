@@ -42,7 +42,7 @@ try {
     assert.equal(await page.locator('h1').count(), 1);
     assert.deepEqual(
       await page.locator('.page-section > h2').evaluateAll((nodes) => nodes.map((node) => node.id)),
-      ['experience', 'education', 'projects', 'thoughts'],
+      ['experience', 'projects', 'thoughts'],
     );
     const projectLinks = page.locator('.project-entry h3 a');
     assert.deepEqual(await projectLinks.allTextContents(), [
@@ -57,7 +57,6 @@ try {
     assert.equal(await projectLinks.first().getAttribute('target'), null);
     assert.equal(await page.locator('.thought-entry h3 a').count(), 3);
     assert.equal(await page.locator('.project-writeup, .detail-content').count(), 0);
-    assert.equal(await page.locator('.education-entry').count(), 2);
     assert.equal(await page.locator('.role-description').count(), 2);
     assert(
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
@@ -112,9 +111,12 @@ try {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(base);
   await ready();
+  assert.equal(
+    await page.locator('.summary').getByRole('link', { name: 'uwaterloo' }).getAttribute('href'),
+    'https://uwaterloo.ca/',
+  );
   for (const [name, id] of [
     ['nexaquanta', 'experience'],
-    ['uwaterloo', 'education'],
     ['view projects', 'projects'],
   ]) {
     await page.locator('.summary').getByRole('link', { name, exact: true }).click();
@@ -125,8 +127,9 @@ try {
     ['/about', '/'],
     ['/experience', '/#experience'],
     ['/what-ive-done', '/#experience'],
-    ['/education', '/#education'],
-    ['/experience#education', '/#education'],
+    ['/education', '/'],
+    ['/experience#education', '/'],
+    ['/#education', '/'],
     ['/projects', '/#projects'],
     ['/thoughts', '/#thoughts'],
     ['/projects/kinetics', '/projects/mm-kinetics'],
@@ -162,6 +165,7 @@ try {
     const project = page.getByRole('article', { name, exact: true });
     const title = project.getByRole('link', { name, exact: true });
     const preview = project.locator('.project-preview');
+    assert.equal(await preview.locator('img').getAttribute('src'), null);
     await project.locator('p').first().hover();
     await preview.waitFor({ state: 'hidden' });
     await title.hover({ position: { x: 5, y: 5 } });

@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState, type MouseEvent, type PointerEvent } from 'react';
-import { education, experience, localProjects, profile, projects, thoughts } from './data';
+import { experience, localProjects, profile, projects, thoughts } from './data';
 import { DotBackground } from './components/DotBackground';
 import { FloralBorder } from './components/FloralBorder';
 import { useTheme } from './useTheme';
@@ -124,7 +124,7 @@ function CsWebring() {
   );
 }
 
-function BackToTop({ pageKey, reduced }: { pageKey: string; reduced: boolean }) {
+function BackToTop({ reduced }: { reduced: boolean }) {
   const [scrollable, setScrollable] = useState(false);
   const slot = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -156,7 +156,7 @@ function BackToTop({ pageKey, reduced }: { pageKey: string; reduced: boolean }) 
       window.removeEventListener('resize', schedule);
       window.visualViewport?.removeEventListener('resize', schedule);
     };
-  }, [pageKey]);
+  }, []);
   return (
     <div ref={slot} className="back-to-top-slot" hidden={!scrollable}>
       <button
@@ -173,13 +173,19 @@ function BackToTop({ pageKey, reduced }: { pageKey: string; reduced: boolean }) 
   );
 }
 
-function OrganizationMark({ name }: { name: 'waterloo' | 'nexaquanta' | 'ucalgary' }) {
+function OrganizationMark({ name }: { name: 'waterloo' | 'nexaquanta' }) {
   return <span className={`organization-mark organization-mark--${name}`} aria-hidden="true" />;
 }
 
 function positionProjectPreview(title: HTMLAnchorElement, x: number, y: number) {
   const preview = title.closest('.project-entry')?.querySelector<HTMLElement>('.project-preview');
   if (!preview) return;
+
+  const image = preview.querySelector('img');
+  if (image?.dataset.src) {
+    image.src = image.dataset.src;
+    delete image.dataset.src;
+  }
 
   const gap = 12;
   const { offsetWidth: width, offsetHeight: height } = preview;
@@ -221,7 +227,7 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
                 cs @{' '}
                 <a
                   className="d-link summary-link organization-name marker-link marker-link--waterloo"
-                  href="#education"
+                  href="https://uwaterloo.ca/"
                 >
                   <OrganizationMark name="waterloo" />
                   uwaterloo
@@ -287,43 +293,6 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
             ))}
           </dl>
         </section>
-        <section className="reading-section page-section" data-reading aria-labelledby="education">
-          <h2 id="education" tabIndex={-1}>
-            education
-          </h2>
-          <div className="education-entry">
-            <div className="education-heading">
-              <h3 className="organization-name">
-                <a
-                  className="d-link marker-link marker-link--waterloo"
-                  href="https://uwaterloo.ca/"
-                >
-                  <OrganizationMark name="waterloo" />
-                  {education.institution}
-                </a>
-              </h3>
-              <span>{education.dates}</span>
-            </div>
-            <p className="entry-title">{education.program}</p>
-            <p>{education.reflection}</p>
-          </div>
-          <div className="education-entry">
-            <div className="education-heading">
-              <h3 className="organization-name">
-                <a
-                  className="d-link marker-link marker-link--ucalgary"
-                  href="https://www.ucalgary.ca/"
-                >
-                  <OrganizationMark name="ucalgary" />
-                  {education.priorCourse.institution}
-                </a>
-              </h3>
-              <span>{education.priorCourse.dates}</span>
-            </div>
-            <p className="entry-title">{education.priorCourse.program}</p>
-            <p>{education.priorCourse.reflection}</p>
-          </div>
-        </section>
         <section className="reading-section page-section" aria-labelledby="projects">
           <h2 id="projects" data-reading tabIndex={-1}>
             projects
@@ -386,11 +355,13 @@ function PortfolioContent({ reduced, initialHome }: { reduced: boolean; initialH
                 {preview && (
                   <figure className="project-preview" aria-hidden="true">
                     <img
-                      src={preview.image}
+                      data-src={preview.image}
+                      style={{
+                        aspectRatio: `${preview.imageSize.width} / ${preview.imageSize.height}`,
+                      }}
                       {...preview.imageSize}
                       className={'imageKind' in preview ? 'writeup-screenshot' : undefined}
                       alt=""
-                      loading="lazy"
                       decoding="async"
                     />
                   </figure>
@@ -687,7 +658,7 @@ function readLocation(): Location {
   const legacy: Record<string, string> = {
     '/about': '/',
     '/what-ive-done': '/experience',
-    '/education': '/experience#education',
+    '/education': '/',
     '/projects/kinetics': '/projects/mm-kinetics',
     '/projects/scrabble': '/projects/scrabble-solver',
     '/projects/flashcards': '/projects',
@@ -698,6 +669,7 @@ function readLocation(): Location {
     '/projects/rag': '/projects',
   };
   const oldFragments: Record<string, string> = {
+    '#education': '/',
     '#project-kinetics': '/projects/mm-kinetics',
     '#project-scrabble': '/projects/scrabble-solver',
     '#project-flashcards': '/projects',
@@ -705,7 +677,7 @@ function readLocation(): Location {
     '#2am-thoughts-before-a-midterm': '/thoughts/why-success-feels-average',
   };
   let destination = legacy[path];
-  if ((path === '/' || path === '/projects' || path === '/thoughts') && oldFragments[url.hash])
+  if (oldFragments[url.hash] && ['/', '/experience', '/projects', '/thoughts'].includes(path))
     destination = oldFragments[url.hash];
   if (path === '/') {
     if (localProjects.some((p) => url.hash === '#project-' + p.id))
@@ -880,7 +852,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
           <CsWebring />
           <ContactLinks />
 
-          <BackToTop key={route.path} pageKey={route.path} reduced={reduced} />
+          <BackToTop key={route.path} reduced={reduced} />
         </footer>
       </div>
     </div>

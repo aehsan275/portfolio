@@ -2,7 +2,7 @@
 
 ## Platform and purpose
 
-Abdullah Ehsan’s web portfolio gives hiring engineers a quick overview of his identity, experience, education, and selected engineering work. Four pages separate the concise About overview, past work and education, selected projects, and future writing.
+Abdullah Ehsan’s web portfolio gives hiring engineers a quick overview of his identity, experience, and selected engineering work. Four pages separate the concise About overview, past work, selected projects, and future writing.
 
 ## Homepage
 
@@ -14,7 +14,7 @@ A page-anchored dot grid retains a fading desktop ink trail. Moving the pointer 
 
 ## Navigation and content
 
-Top navigation contains about (/), experience (/experience), projects (/projects), and thoughts (/thoughts). About keeps its two-column introduction. Other pages use a 740px reading column aligned with the navigation’s left edge. All pages share About’s header position and width and wide footer, without an extra wordmark. Every page has the visible email address, GitHub, LinkedIn, X, and Cal.com links in a normal-flow footer. Thoughts (/thoughts) lists the supplied essay title and opens its own blank detail page; the original three paragraphs remain saved in source data. Native URLs, History API navigation, direct loading, browser history, heading focus, and a not-found view are supported. The former /what-ive-done path redirects to /experience, and /education resolves to its section; homepage project fragments resolve to individual project pages. Project-detail paths render their individual pages; removed projects resolve to the projects index. No publication is included.
+Top navigation contains about (/), experience (/experience), projects (/projects), and thoughts (/thoughts). About keeps its two-column introduction. Other pages use a 740px reading column aligned with the navigation’s left edge. All pages share About’s header position and width and wide footer, without an extra wordmark. Every page has the visible email address, GitHub, LinkedIn, X, and Cal.com links in a normal-flow footer. Thoughts (/thoughts) lists the supplied essay title and opens its own blank detail page; the original three paragraphs remain saved in source data. Native URLs, History API navigation, direct loading, browser history, heading focus, and a not-found view are supported. The former /what-ive-done path redirects to /experience, and /education resolves to the homepage; homepage project fragments resolve to individual project pages. Project-detail paths render their individual pages; removed projects resolve to the projects index. No publication is included.
 
 ## Stack
 

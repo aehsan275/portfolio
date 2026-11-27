@@ -1,7 +1,7 @@
 @font-face {
   font-family: Inter;
-  src: url('/fonts/inter-latin.woff2') format('woff2');
-  font-weight: 100 900;
+  src: url('/fonts/inter-reading.woff2') format('woff2');
+  font-weight: 400 600;
   font-display: swap;
 }
 @font-face {
@@ -12,7 +12,7 @@
 }
 @font-face {
   font-family: 'Noto Nastaliq Urdu';
-  src: url('/fonts/noto-nastaliq-urdu.woff2') format('woff2');
+  src: url('/fonts/nastaliq-name.woff2') format('woff2');
   font-weight: 400 700;
   font-display: swap;
 }
@@ -97,9 +97,7 @@ html {
 
 .intro,
 .summary,
-.detail-page,
-.reading-section,
-.scroll-footer {
+.reading-section {
   position: relative;
 }
 .floral-border {
@@ -580,30 +578,6 @@ h1:focus {
     3% 52%
   );
 }
-.marker-link--ucalgary {
-  --marker-ink: #ed7582;
-  --marker-angle: 103deg;
-  --marker-tilt: -0.55deg;
-  --marker-edge: polygon(
-    0 21%,
-    6% 5%,
-    16% 11%,
-    38% 4%,
-    56% 11%,
-    80% 5%,
-    99% 14%,
-    97% 34%,
-    100% 57%,
-    97% 88%,
-    85% 97%,
-    69% 90%,
-    51% 98%,
-    34% 88%,
-    6% 96%,
-    0 79%,
-    2% 53%
-  );
-}
 .intro-bio {
   margin-top: var(--space-3);
   text-wrap: pretty;
@@ -685,7 +659,6 @@ h1:focus {
 }
 :is(
   .contact-copy-status,
-  .education-heading > span,
   .equation-note,
   .footer-copyright,
   .project-note,
@@ -955,19 +928,9 @@ html[data-page-hidden='true'] .name > span {
   }
 }
 
-.education-heading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 4px 24px;
-}
-:is(.education-heading > span, .role-dates) {
+.role-dates {
   color: var(--ink-muted);
   font-variant-numeric: tabular-nums;
-}
-.education-entry + .education-entry {
-  margin-top: var(--space-4);
 }
 .back-to-top-slot {
   padding-top: var(--space-3);
@@ -999,25 +962,9 @@ html[data-page-hidden='true'] .name > span {
   }
 }
 
-.organization-mark--ucalgary {
-  width: 0.784cap;
-  background-image: url('/logos/ucalgary-color.svg');
-  background-size: contain;
-  background-position: center;
-}
-
 .entry-title {
   font-weight: var(--weight-strong);
   line-height: var(--compact-leading);
-}
-.education-heading {
-  margin-bottom: var(--space-1);
-}
-.education-heading h3 {
-  margin-bottom: 0;
-}
-.education-entry .entry-title + p {
-  margin-top: var(--space-1);
 }
 .detail-back {
   display: inline-flex;
@@ -1075,6 +1022,10 @@ html[data-page-hidden='true'] .name > span {
   }
 }
 @media (hover: none) {
+  .cs-webring a {
+    min-width: 44px;
+    min-height: 44px;
+  }
   :is(.project-title, .thought-title) {
     position: relative;
   }

@@ -3,7 +3,7 @@
   "redirects": [
     { "source": "/about", "destination": "/", "permanent": true },
     { "source": "/what-ive-done", "destination": "/experience", "permanent": true },
-    { "source": "/education", "destination": "/experience#education", "permanent": true },
+    { "source": "/education", "destination": "/", "permanent": true },
     { "source": "/projects/kinetics", "destination": "/projects/mm-kinetics", "permanent": true },
     {
       "source": "/projects/scrabble",

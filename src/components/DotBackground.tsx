@@ -41,9 +41,8 @@ export function DotBackground({
     const fontRequest = `10px ${font}`;
     const desktop = matchMedia('(min-width: 1024px)');
     const mouse = matchMedia('(hover: hover) and (pointer: fine)');
-    const cache = document.createElement('canvas');
+    let cache: HTMLCanvasElement | null = null;
     const tile = document.createElement('canvas');
-    const cacheContext = cache.getContext('2d')!;
     const tileContext = tile.getContext('2d')!;
     let fontReady = document.fonts.check(fontRequest);
     let active = true;
@@ -64,8 +63,9 @@ export function DotBackground({
     let trail: TrailPoint[] = [];
     let painted: Bounds | null = null;
     let frame = 0;
+    let layoutFrame = 0;
 
-    const enabled = () => mouse.matches && !reduced && !document.hidden;
+    const canHover = () => desktop.matches && mouse.matches && !reduced;
 
     const readingFade = (x: number, y: number) => {
       let nearest = Infinity;
@@ -101,13 +101,13 @@ export function DotBackground({
       dotX = mass ? xMass / mass : cellWidth / 2;
       dotY = mass ? yMass / mass : cellHeight * 0.7;
       dotRadius = mass ? Math.sqrt(mass / (255 * Math.PI)) : 0.7 * scale;
-      pattern = cacheContext.createPattern(tile, 'repeat');
+      pattern = ctx.createPattern(tile, 'repeat');
       canvas.dataset.cellWidth = String(cellWidth / scale);
       canvas.dataset.cellHeight = String(cellHeight / scale);
     };
 
     const restore = () => {
-      if (!painted) return;
+      if (!painted || !cache) return;
       const { left, right, top, bottom } = painted;
       const width = right - left;
       const height = bottom - top;
@@ -121,7 +121,7 @@ export function DotBackground({
       canvas.dataset.running = 'false';
       restore();
       canvas.dataset.hoverCells = '0';
-      if (!pointer || !enabled() || !pattern) return;
+      if (!pointer || !canHover() || document.hidden || !pattern) return;
 
       trail = trail.filter((point) => now - point.time < TRAIL_TIME);
       const toCanvas = (point: Point, radius: number, strength: number) => ({
@@ -201,7 +201,7 @@ export function DotBackground({
       frame = requestAnimationFrame(drawHover);
     };
 
-    const drawBanner = (bounds: DOMRect) => {
+    const drawBanner = (bounds: DOMRect, paint: CanvasRenderingContext2D) => {
       const banner = document.querySelector<SVGSVGElement>('.banner-inner');
       if (!banner) return;
       const rail = banner.getBoundingClientRect();
@@ -219,15 +219,15 @@ export function DotBackground({
       );
       banner.style.setProperty('--banner-shift-y', `${y / scale - (rail.top - bounds.top + 26)}px`);
 
-      cacheContext.save();
-      cacheContext.fillStyle = bannerInk;
-      cacheContext.globalAlpha = 0.95;
+      paint.save();
+      paint.fillStyle = bannerInk;
+      paint.globalAlpha = 0.95;
       for (let col = first; col <= last; col++) {
-        cacheContext.beginPath();
-        cacheContext.arc(col * cellWidth + dotX, y, Math.max(1, 1.1 * scale), 0, Math.PI * 2);
-        cacheContext.fill();
+        paint.beginPath();
+        paint.arc(col * cellWidth + dotX, y, Math.max(1, 1.1 * scale), 0, Math.PI * 2);
+        paint.fill();
       }
-      cacheContext.restore();
+      paint.restore();
     };
 
     const layout = () => {
@@ -240,8 +240,14 @@ export function DotBackground({
       const nextScale = window.devicePixelRatio || 1;
       const width = Math.round(bounds.width * nextScale);
       const height = Math.round(bounds.height * nextScale);
-      // The visible canvas survives theme changes, while each effect creates a new cache.
-      for (const layer of [canvas, cache]) {
+      if (canHover()) cache ??= document.createElement('canvas');
+      else {
+        cache = null;
+        pointer = null;
+        trail = [];
+      }
+      const paint = cache?.getContext('2d') ?? ctx;
+      for (const layer of cache ? [canvas, cache] : [canvas]) {
         if (width !== layer.width || height !== layer.height) {
           layer.width = width;
           layer.height = height;
@@ -266,40 +272,52 @@ export function DotBackground({
           bottom: rect.bottom - bounds.top + 14,
         };
       });
-      cacheContext.clearRect(0, 0, width, height);
-      cacheContext.fillStyle = pattern;
-      cacheContext.globalAlpha = fieldOpacity;
-      cacheContext.fillRect(0, 0, width, height);
+      paint.globalAlpha = 1;
+      paint.clearRect(0, 0, width, height);
+      paint.fillStyle = pattern;
+      paint.globalAlpha = fieldOpacity;
+      paint.fillRect(0, 0, width, height);
 
       // Blur one union of the reading regions so overlapping text areas don't stack the fade.
-      cacheContext.save();
-      cacheContext.globalCompositeOperation = 'destination-out';
-      cacheContext.globalAlpha = fieldOpacity ? 1 - textOpacity / fieldOpacity : 0;
-      cacheContext.fillStyle = '#000';
-      cacheContext.filter = `blur(${36 * scale}px)`;
-      cacheContext.beginPath();
+      paint.save();
+      paint.globalCompositeOperation = 'destination-out';
+      paint.globalAlpha = fieldOpacity ? 1 - textOpacity / fieldOpacity : 0;
+      paint.fillStyle = '#000';
+      paint.filter = `blur(${36 * scale}px)`;
+      paint.beginPath();
       for (const region of regions) {
-        cacheContext.rect(
+        paint.rect(
           region.left * scale,
           region.top * scale,
           (region.right - region.left) * scale,
           (region.bottom - region.top) * scale,
         );
       }
-      cacheContext.fill();
-      cacheContext.restore();
-      drawBanner(bounds);
+      paint.fill();
+      paint.restore();
+      drawBanner(bounds, paint);
+      paint.globalAlpha = 1;
 
       cancelAnimationFrame(frame);
       painted = null;
-      ctx.clearRect(0, 0, width, height);
-      ctx.drawImage(cache, 0, 0);
+      if (cache) {
+        ctx.clearRect(0, 0, width, height);
+        ctx.drawImage(cache, 0, 0);
+      }
       canvas.dataset.renderedTheme = theme;
       drawHover();
     };
 
+    const scheduleLayout = () => {
+      if (layoutFrame) return;
+      layoutFrame = requestAnimationFrame(() => {
+        layoutFrame = 0;
+        layout();
+      });
+    };
+
     const move = (event: PointerEvent) => {
-      if (!enabled() || event.pointerType !== 'mouse') return;
+      if (!canHover() || document.hidden || event.pointerType !== 'mouse') return;
       const next = { x: event.clientX, y: event.clientY };
       if (pointer) {
         const distance = Math.hypot(next.x - pointer.x, next.y - pointer.y);
@@ -331,22 +349,25 @@ export function DotBackground({
       document.documentElement.dataset.pageHidden = String(document.hidden);
       clear();
     };
-    const observer = new ResizeObserver(layout);
+    const observer = new ResizeObserver(scheduleLayout);
     observer.observe(canvas);
     document.querySelectorAll('[data-reading]').forEach((element) => observer.observe(element));
-    window.addEventListener('pointermove', move, { passive: true });
-    window.addEventListener('scroll', scroll, { passive: true });
-    window.addEventListener('blur', clear);
-    document.documentElement.addEventListener('pointerleave', clear);
-    document.addEventListener('visibilitychange', visibility);
-    desktop.addEventListener('change', layout);
-    mouse.addEventListener('change', clear);
-    window.addEventListener('resize', layout);
-    window.visualViewport?.addEventListener('resize', layout);
+
+    const listeners = new AbortController();
+    const { signal } = listeners;
+    window.addEventListener('pointermove', move, { passive: true, signal });
+    window.addEventListener('scroll', scroll, { passive: true, signal });
+    window.addEventListener('blur', clear, { signal });
+    document.documentElement.addEventListener('pointerleave', clear, { signal });
+    document.addEventListener('visibilitychange', visibility, { signal });
+    desktop.addEventListener('change', scheduleLayout, { signal });
+    mouse.addEventListener('change', scheduleLayout, { signal });
+    window.addEventListener('resize', scheduleLayout, { signal });
+    window.visualViewport?.addEventListener('resize', scheduleLayout, { signal });
 
     let densityQuery: MediaQueryList;
     const densityChanged = () => {
-      layout();
+      scheduleLayout();
       watchDensity();
     };
     const watchDensity = () => {
@@ -369,17 +390,10 @@ export function DotBackground({
     return () => {
       active = false;
       cancelAnimationFrame(frame);
+      cancelAnimationFrame(layoutFrame);
       observer.disconnect();
+      listeners.abort();
       densityQuery.removeEventListener('change', densityChanged);
-      window.removeEventListener('pointermove', move);
-      window.removeEventListener('scroll', scroll);
-      window.removeEventListener('blur', clear);
-      document.documentElement.removeEventListener('pointerleave', clear);
-      document.removeEventListener('visibilitychange', visibility);
-      desktop.removeEventListener('change', layout);
-      mouse.removeEventListener('change', clear);
-      window.removeEventListener('resize', layout);
-      window.visualViewport?.removeEventListener('resize', layout);
       delete document.documentElement.dataset.pageHidden;
     };
   }, [reduced, pageKey, theme]);
