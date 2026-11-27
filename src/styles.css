@@ -182,6 +182,19 @@ h1:focus {
   line-height: 1.35;
   letter-spacing: -0.025em;
 }
+.page-section > h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.page-section > h2::after {
+  content: '';
+  flex: none;
+  inline-size: 7px;
+  block-size: 7px;
+  border: 1px solid var(--ornament-gold);
+  transform: scaleX(1.6) rotate(45deg);
+}
 .writeup-section p {
   max-width: 68ch;
 }
